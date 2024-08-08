@@ -2,7 +2,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35122.118
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwincatToolbox", "TwincatToolbox\TwincatToolbox.csproj", "{4C7C4C6E-207F-468E-9FF1-71C93178E7D0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwincatToolbox", "TwincatToolbox\TwincatToolbox.csproj", "{4C7C4C6E-207F-468E-9FF1-71C93178E7D0}"
 EndProject
 Global
 	GlobalSection(ExtensibilityGlobals) = postSolution
