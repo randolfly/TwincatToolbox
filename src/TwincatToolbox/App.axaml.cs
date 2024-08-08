@@ -3,18 +3,21 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
-
+using HotAvalonia;
 using TwincatToolbox.ViewModels;
 using TwincatToolbox.Views;
 
 namespace TwincatToolbox;
 public partial class App : Application
 {
-    public override void Initialize() {
+    public override void Initialize()
+    {
+        this.EnableHotReload();
         AvaloniaXamlLoader.Load(this);
     }
 
-    public override void OnFrameworkInitializationCompleted() {
+    public override void OnFrameworkInitializationCompleted()
+    {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             // Line below is needed to remove Avalonia data validation.
