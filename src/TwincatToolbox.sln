@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35122.118
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwincatToolbox", "TwincatToolbox\TwincatToolbox.csproj", "{4C7C4C6E-207F-468E-9FF1-71C93178E7D0}"
+EndProject
+Global
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0C01F160-11F5-4346-B2BD-AECDBED0AEF1}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4C7C4C6E-207F-468E-9FF1-71C93178E7D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C7C4C6E-207F-468E-9FF1-71C93178E7D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C7C4C6E-207F-468E-9FF1-71C93178E7D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C7C4C6E-207F-468E-9FF1-71C93178E7D0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
