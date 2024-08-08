@@ -4,6 +4,8 @@ VisualStudioVersion = 17.10.35122.118
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwincatToolbox", "TwincatToolbox\TwincatToolbox.csproj", "{4C7C4C6E-207F-468E-9FF1-71C93178E7D0}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwincatToolbox.Test", "TwincatToolbox.Test\TwincatToolbox.Test.csproj", "{A455F971-C616-4F40-B509-1FC9EC33F7D0}"
+EndProject
 Global
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0C01F160-11F5-4346-B2BD-AECDBED0AEF1}
@@ -13,6 +15,10 @@ Global
 		{4C7C4C6E-207F-468E-9FF1-71C93178E7D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4C7C4C6E-207F-468E-9FF1-71C93178E7D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4C7C4C6E-207F-468E-9FF1-71C93178E7D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A455F971-C616-4F40-B509-1FC9EC33F7D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A455F971-C616-4F40-B509-1FC9EC33F7D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A455F971-C616-4F40-B509-1FC9EC33F7D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A455F971-C616-4F40-B509-1FC9EC33F7D0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
