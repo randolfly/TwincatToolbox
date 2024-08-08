@@ -20,4 +20,8 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TwincatToolbox\TwincatToolbox.csproj" />
+  </ItemGroup>
+
 </Project>

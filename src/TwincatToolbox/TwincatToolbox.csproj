@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
+    <Folder Include="Extensions\" />
     <AvaloniaResource Include="Assets\**" />
     <Folder Include="Controls\" />
   </ItemGroup>
@@ -21,6 +21,7 @@
     <PackageReference Include="Avalonia.Fonts.Inter" Version="11.1.2" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.1.2" />
+    <PackageReference Include="Beckhoff.TwinCAT.Ads" Version="6.1.260" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
     <PackageReference Include="Irihi.Ursa" Version="1.0.0" />
     <PackageReference Include="Irihi.Ursa.Themes.Semi" Version="1.0.0" />
