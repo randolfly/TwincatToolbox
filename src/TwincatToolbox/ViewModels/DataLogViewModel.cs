@@ -1,8 +1,8 @@
-using System;
+using Material.Icons;
 
 namespace TwincatToolbox.ViewModels;
 
-public class DataLogViewModel : ViewModelBase
+public partial class DataLogViewModel() : ViewModelBase("DataLog", MaterialIconKind.Blog)
 {
 
 }

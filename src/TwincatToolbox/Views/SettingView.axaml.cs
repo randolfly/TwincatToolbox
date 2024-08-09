@@ -2,11 +2,11 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace TwincatToolbox.Pages;
+namespace TwincatToolbox.Views;
 
-public partial class DashboardPage : UserControl
+public partial class SettingView : UserControl
 {
-    public DashboardPage()
+    public SettingView()
     {
         InitializeComponent();
     }

@@ -1,0 +1,59 @@
+<suki:SukiWindow
+    x:Class="TwincatToolbox.Views.MainView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+    xmlns:suki="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+    xmlns:local="using:TwincatToolbox"
+    xmlns:vm="using:TwincatToolbox.ViewModels"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+    BackgroundStyle="Gradient"
+    Title="TwinCAT ToolBox"
+    Icon="avares://TwincatToolbox/Assets/avalonia-logo.ico"
+    Width="800" Height="450" x:DataType="vm:MainViewModel">
+    <suki:SukiWindow.LogoContent>
+        <materialIcons:MaterialIcon Width="20"
+                                    Height="20"
+                                    VerticalAlignment="Center"
+                                    Foreground="{DynamicResource SukiPrimaryColor}"
+                                    Kind="Dog">
+            <materialIcons:MaterialIcon.Transitions>
+                <Transitions>
+                    <BrushTransition Property="Foreground" Duration="{DynamicResource ShortAnimationDuration}" />
+                </Transitions>
+            </materialIcons:MaterialIcon.Transitions>
+        </materialIcons:MaterialIcon>
+    </suki:SukiWindow.LogoContent>
+
+    <suki:SukiSideMenu IsSearchEnabled="False"
+                       ItemsSource="{Binding NavViews}"
+                       SelectedItem="{Binding ActiveView}">
+        <suki:SukiSideMenu.ItemTemplate>
+            <DataTemplate>
+                <suki:SukiSideMenuItem Classes="Compact" Header="{Binding DisplayName}">
+                    <suki:SukiSideMenuItem.Icon>
+                        <materialIcons:MaterialIcon Kind="{Binding Icon}" />
+                    </suki:SukiSideMenuItem.Icon>
+                </suki:SukiSideMenuItem>
+            </DataTemplate>
+        </suki:SukiSideMenu.ItemTemplate>
+        <suki:SukiSideMenu.HeaderContent>
+            <suki:GlassCard Margin="10 5">
+                <StackPanel Orientation="Vertical">
+                    <TextBox Watermark="NetId"/>
+                    <TextBox Watermark="PortId" />
+                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                        <Button Classes="Flat" ToolTip.Tip="Ads Connected">
+                            A
+                        </Button>
+                        <Button Classes="Flat" ToolTip.Tip="Ads Running">
+                            B
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+            </suki:GlassCard>
+        </suki:SukiSideMenu.HeaderContent>
+    </suki:SukiSideMenu>
+</suki:SukiWindow>

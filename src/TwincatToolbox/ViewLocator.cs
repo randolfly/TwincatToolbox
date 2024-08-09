@@ -1,34 +1,41 @@
 using System;
-
+using System.Collections.Generic;
+using System.ComponentModel;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
-
-using TwincatToolbox.ViewModels;
 
 namespace TwincatToolbox;
 public class ViewLocator : IDataTemplate
 {
+    private readonly Dictionary<object, Control> _controlCache = new();
 
     public Control? Build(object? data)
     {
-        if (data is null)
-            return null;
-
-        var name = data.GetType().FullName!.Replace("ViewModel", "Page", StringComparison.Ordinal);
-        var type = Type.GetType(name);
-
-        if (type != null)
+        var fullName = data?.GetType().FullName;
+        if (fullName is null)
         {
-            var control = (Control)Activator.CreateInstance(type)!;
-            control.DataContext = data;
-            return control;
+            return new TextBlock { Text = "Data is null or has no name." };
         }
 
-        return new TextBlock { Text = "Not Found: " + name };
+        var name = fullName.Replace("ViewModel", "View");
+        var type = Type.GetType(name);
+        if (type is null)
+        {
+            return new TextBlock { Text = $"No View For {name}." };
+        }
+
+        if (!_controlCache.TryGetValue(data!, out var res))
+        {
+            res ??= (Control)Activator.CreateInstance(type)!;
+            _controlCache[data!] = res;
+        }
+
+        res.DataContext = data;
+        return res;
     }
 
     public bool Match(object? data)
     {
-        return data is ViewModelBase;
+        return data is INotifyPropertyChanged;
     }
 }

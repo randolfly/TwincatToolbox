@@ -2,11 +2,11 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace TwincatToolbox.Pages;
+namespace TwincatToolbox.Views;
 
-public partial class DataLogPage : UserControl
+public partial class DataLogView : UserControl
 {
-    public DataLogPage()
+    public DataLogView()
     {
         InitializeComponent();
     }

@@ -1,8 +1,8 @@
-using System;
+using Material.Icons;
 
 namespace TwincatToolbox.ViewModels;
 
-public class DashboardViewModel : ViewModelBase
+public partial class DashboardViewModel() : ViewModelBase("Dashboard", MaterialIconKind.CircleOutline, -1000)
 {
 
 }
