@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 using Avalonia;
 using Avalonia.Controls;
@@ -7,11 +8,13 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Templates;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
+using Avalonia.Platform;
 
 using HotAvalonia;
 
 using Microsoft.Extensions.DependencyInjection;
 
+using TwincatToolbox.Models;
 using TwincatToolbox.Services;
 using TwincatToolbox.Services.IService;
 using TwincatToolbox.ViewModels;
@@ -26,10 +29,10 @@ public partial class App : Application
         this.EnableHotReload();
         AvaloniaXamlLoader.Load(this);
         _provider = ConfigureServices();
+        ConfigureApp();
     }
 
-    public override void OnFrameworkInitializationCompleted()
-    {
+    public override void OnFrameworkInitializationCompleted() {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             // Line below is needed to remove Avalonia data validation.
@@ -44,7 +47,6 @@ public partial class App : Application
 
         base.OnFrameworkInitializationCompleted();
     }
-
     private static ServiceProvider ConfigureServices()
     {
         var viewLocator = Current?.DataTemplates.First(x => x is ViewLocator);
@@ -52,7 +54,7 @@ public partial class App : Application
 
         // services
         services.AddSingleton<IAdsComService, AdsComService>();
-
+        
         // viewmodels
         if (viewLocator != null)
             services.AddSingleton(viewLocator);
@@ -65,4 +67,10 @@ public partial class App : Application
 
         return services.BuildServiceProvider();
     }
+
+    private static void ConfigureApp()
+    {
+        AppConfigService.LoadConfig(AppConfig.ConfigFileFullName);
+    }
+
 }

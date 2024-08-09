@@ -16,19 +16,19 @@ public static class AppConfigService
         WriteIndented = true
     };
 
-    public static async Task LoadConfigAsync(string configFileFullName)
+    public static void LoadConfig(string configFileFullName)
     {
         if (!File.Exists(configFileFullName)) return;
-        await using var fs = new FileStream(configFileFullName, FileMode.Open);
-        AppConfig = await JsonSerializer.DeserializeAsync<AppConfig>(fs, jsonSerializerOptions) ?? new();
+        using var fs = new FileStream(configFileFullName, FileMode.Open);
+        AppConfig = JsonSerializer.Deserialize<AppConfig>(fs, jsonSerializerOptions) ?? new();
     }
 
-    public static async Task SaveConfigAsync(string configFileFullName)
+    public static void SaveConfig(string configFileFullName)
     {
         if (!Directory.Exists(Path.GetDirectoryName(configFileFullName)))
             Directory.CreateDirectory(Path.GetDirectoryName(configFileFullName)!);
-        await using var fs = new FileStream(configFileFullName, FileMode.Create);
-        await JsonSerializer.SerializeAsync(fs, AppConfig, jsonSerializerOptions);
+        using var fs = new FileStream(configFileFullName, FileMode.Create);
+        JsonSerializer.Serialize(fs, AppConfig, jsonSerializerOptions);
     }
 
 }

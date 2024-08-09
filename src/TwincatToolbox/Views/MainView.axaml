@@ -8,11 +8,11 @@
     xmlns:vm="using:TwincatToolbox.ViewModels"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+    mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="600"
     BackgroundStyle="Gradient"
     Title="TwinCAT ToolBox"
     Icon="avares://TwincatToolbox/Assets/avalonia-logo.ico"
-    Width="800" Height="450" x:DataType="vm:MainViewModel">
+    Width="900" Height="600" x:DataType="vm:MainViewModel">
     <suki:SukiWindow.LogoContent>
         <materialIcons:MaterialIcon Width="20"
                                     Height="20"
@@ -40,7 +40,7 @@
             </DataTemplate>
         </suki:SukiSideMenu.ItemTemplate>
         <suki:SukiSideMenu.HeaderContent>
-            <suki:GlassCard Margin="10 5">
+            <suki:GlassCard Margin="10 0 10 10">
                 <StackPanel Orientation="Vertical">
                     <TextBox Text="{Binding NetId}" Watermark="NetId"/>
                     <TextBox Text="{Binding PortId}" Watermark="PortId" />
@@ -61,9 +61,24 @@
                                 Command="{Binding DisconnectAdsServerCommand}">
                             <materialIcons:MaterialIcon Kind="Run"/>
                         </Button>
+                        <Button Classes="Basic" ToolTip.Tip="Check Status"
+                                Command="{Binding CheckAdsStateCommand}">
+                            <materialIcons:MaterialIcon Kind="Check"/>
+                        </Button>
                     </StackPanel>
                 </StackPanel>
             </suki:GlassCard>
         </suki:SukiSideMenu.HeaderContent>
+        <suki:SukiSideMenu.FooterContent>
+            <suki:GlassCard Margin="10">
+                <StackPanel HorizontalAlignment="Stretch">
+                    <TextBlock Classes="h4 primary">
+                        <Run Text="State:"/>
+                        <Run Text="{Binding AdsStateText}"
+                             FontWeight="Bold" Foreground="Orange"/>
+                    </TextBlock>
+                </StackPanel>
+            </suki:GlassCard>
+        </suki:SukiSideMenu.FooterContent>
     </suki:SukiSideMenu>
 </suki:SukiWindow>
