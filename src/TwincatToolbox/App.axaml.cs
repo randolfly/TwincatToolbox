@@ -12,6 +12,8 @@ using HotAvalonia;
 
 using Microsoft.Extensions.DependencyInjection;
 
+using TwincatToolbox.Services;
+using TwincatToolbox.Services.IService;
 using TwincatToolbox.ViewModels;
 
 namespace TwincatToolbox;
@@ -47,6 +49,9 @@ public partial class App : Application
     {
         var viewLocator = Current?.DataTemplates.First(x => x is ViewLocator);
         var services = new ServiceCollection();
+
+        // services
+        services.AddSingleton<IAdsComService, AdsComService>();
 
         // viewmodels
         if (viewLocator != null)
