@@ -9,11 +9,12 @@ namespace TwincatToolbox;
 public class ViewLocator : IDataTemplate
 {
 
-    public Control? Build(object? data) {
+    public Control? Build(object? data)
+    {
         if (data is null)
             return null;
 
-        var name = data.GetType().FullName!.Replace("ViewModel", "View", StringComparison.Ordinal);
+        var name = data.GetType().FullName!.Replace("ViewModel", "Page", StringComparison.Ordinal);
         var type = Type.GetType(name);
 
         if (type != null)
@@ -26,7 +27,8 @@ public class ViewLocator : IDataTemplate
         return new TextBlock { Text = "Not Found: " + name };
     }
 
-    public bool Match(object? data) {
+    public bool Match(object? data)
+    {
         return data is ViewModelBase;
     }
 }

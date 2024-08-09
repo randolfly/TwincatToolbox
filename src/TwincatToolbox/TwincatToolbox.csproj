@@ -11,7 +11,7 @@
   <ItemGroup>
     <Folder Include="Extensions\" />
     <AvaloniaResource Include="Assets\**" />
-    <Folder Include="Controls\" />
+    <Folder Include="Views\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,5 +40,11 @@
     <PackageReference Condition="$(DefineConstants.Contains(ENABLE_XAML_HOT_RELOAD))" Include="Avalonia.Markup.Xaml.Loader" Version="11.1.2" />
     <PackageReference Condition="$(DefineConstants.Contains(ENABLE_XAML_HOT_RELOAD))" Include="HotAvalonia" Version="1.1.1" />
     <PackageReference Include="HotAvalonia.Extensions" Version="1.1.1" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Pages\SettingPage.axaml.cs">
+      <DependentUpon>SettingPage.axaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>

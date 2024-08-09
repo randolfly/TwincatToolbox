@@ -1,8 +1,7 @@
 <Window x:Class="TwincatToolbox.Views.MainWindow"
         xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-        xmlns:suki="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+        xmlns:local="using:TwincatToolbox"
         xmlns:vm="using:TwincatToolbox.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -18,16 +17,18 @@
         App.axaml.cs) -->
         <vm:MainWindowViewModel />
     </Design.DataContext>
-    <DockPanel HorizontalAlignment="Center"
-               Margin="8">
-        <Button DockPanel.Dock="Top"
-                Content="Click me"
-                Width="100"
-                Height="50" />
-        <TextBlock VerticalAlignment="Center"
-                   DockPanel.Dock="Bottom"
-                   Classes="H4"
-                   Text="{Binding Greeting}"
-                   Theme="{DynamicResource TitleTextBlock}" />
-    </DockPanel>
+    <Panel>
+        <Grid ColumnDefinitions="Auto, *">
+            <Border>
+                <Button>Hello!</Button>
+            </Border>
+            <Panel Grid.Column="1">
+                <ContentControl Content="{Binding Content}">
+                    <ContentControl.ContentTemplate>
+                        <local:ViewLocator />
+                    </ContentControl.ContentTemplate>
+                </ContentControl>
+            </Panel>
+        </Grid>
+    </Panel>
 </Window>
