@@ -2,9 +2,45 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d"
-             d:DesignWidth="580"
-             d:DesignHeight="400"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:suki="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+             xmlns:vm="using:TwincatToolbox.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="580" d:DesignHeight="400"
+             x:DataType="vm:DataLogViewModel"
              x:Class="TwincatToolbox.Views.DataLogView">
-    Welcome to Avalonia! Log
+    <suki:GlassCard Margin="10">
+        <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Grid ColumnDefinitions="6*,*,*,*">
+                <TextBox Watermark="Search Ads Symbols">
+                </TextBox>
+                <Button Classes="Basic" Grid.Column="1"
+                        ToolTip.Tip="Get Symbols">
+                    <materialIcons:MaterialIcon Kind="Check"/>
+                </Button>
+                <Button Classes="Basic" Grid.Column="2"
+                        ToolTip.Tip="Config Log">
+                    <materialIcons:MaterialIcon Kind="Build"/>
+                </Button>
+                <Button Classes="Basic" Grid.Column="3"
+                        ToolTip.Tip="Start Log">
+                    <materialIcons:MaterialIcon Kind="Play"/>
+                </Button>
+            </Grid>
+            <Grid ColumnDefinitions="*,*">
+                <suki:GlassCard Margin="5">
+                    <suki:GroupBox Header="Available Symbols" >
+                        <ListBox SelectionMode="Multiple,Toggle"
+                                 ItemsSource="{Binding AvailableSymbol}"/>
+                    </suki:GroupBox>
+                </suki:GlassCard>
+                <suki:GlassCard Grid.Column="1" Margin="5">
+                    <suki:GroupBox Header="Record Symbols">
+                        <ListBox SelectionMode="Multiple,Toggle"
+                                 ItemsSource="{Binding RecordSymbol}"/>
+                    </suki:GroupBox>
+                </suki:GlassCard>
+
+            </Grid>
+        </StackPanel>
+    </suki:GlassCard>
 </UserControl>

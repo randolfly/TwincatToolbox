@@ -56,7 +56,7 @@ public class AdsComService : IAdsComService
         adsClient.Dispose();
     }
 
-    public List<AmsNetId> ScanAdsNetwork()
+    public IEnumerable<AmsNetId> ScanAdsNetwork()
     {
         // todo: 没有现成的API可以扫描本地网络上的Ads服务器(PowerShell可以实现)
         var adsServers = new List<AmsNetId>();

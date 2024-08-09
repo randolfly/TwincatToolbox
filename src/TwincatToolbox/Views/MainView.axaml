@@ -47,19 +47,13 @@
 
                     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal"
                                 Spacing="10">
-                        <StackPanel.Styles>
-                            <Style Selector="materialIcons|MaterialIcon">
-                                <Setter Property="Width" Value="20" />
-                                <Setter Property="Height" Value="20" />
-                            </Style>
-                        </StackPanel.Styles>
-                        <Button Classes="Basic" ToolTip.Tip="Ads Connected"
+                        <Button Classes="Basic" ToolTip.Tip="Connecte Ads"
                                 Command="{Binding ConnectAdsServerCommand}">
                             <materialIcons:MaterialIcon Kind="Connection"/>
                         </Button>
-                        <Button Classes="Basic" ToolTip.Tip="Ads Running"
+                        <Button Classes="Basic" ToolTip.Tip="Disconnect Ads"
                                 Command="{Binding DisconnectAdsServerCommand}">
-                            <materialIcons:MaterialIcon Kind="Run"/>
+                            <materialIcons:MaterialIcon Kind="Delete"/>
                         </Button>
                         <Button Classes="Basic" ToolTip.Tip="Check Status"
                                 Command="{Binding CheckAdsStateCommand}">

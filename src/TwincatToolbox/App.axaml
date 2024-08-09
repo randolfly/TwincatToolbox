@@ -13,5 +13,9 @@
     <Application.Styles>
         <materialIcons:MaterialIconStyles />
         <suki:SukiTheme ThemeColor="Blue"  />
+        <Style Selector="materialIcons|MaterialIcon">
+            <Setter Property="Width" Value="20" />
+            <Setter Property="Height" Value="20" />
+        </Style>
     </Application.Styles>
 </Application>
