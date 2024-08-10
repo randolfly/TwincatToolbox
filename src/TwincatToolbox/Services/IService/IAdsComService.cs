@@ -19,7 +19,7 @@ public interface IAdsComService : IDisposable
     public AdsState GetAdsState();
     public void ConnectAdsServer(AdsConfig adsConfig);
     public void DisconnectAdsServer();
-    public IEnumerable<ISymbol> GetAvailableSymbols();
+    public IEnumerable<SymbolNode> GetAvailableSymbols();
 
     /// <summary>
     /// 扫描本地网络上的Ads服务器

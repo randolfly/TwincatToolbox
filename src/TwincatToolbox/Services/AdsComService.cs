@@ -59,12 +59,32 @@ public class AdsComService : IAdsComService
     /// 获取所有可行的Symbols
     /// </summary>
     /// <returns>符号列表</returns>
-    public IEnumerable<ISymbol> GetAvailableSymbols() {
-        var settings = new SymbolLoaderSettings(SymbolsLoadMode.Flat, 
+    public IEnumerable<SymbolNode> GetAvailableSymbols() {
+        var settings = new SymbolLoaderSettings(SymbolsLoadMode.VirtualTree, 
             ValueAccessMode.IndexGroupOffset);
         var symbolLoader = SymbolLoaderFactory.Create(adsClient, settings);
         var symbols = symbolLoader.Symbols;
-        return symbols.Where(s => s.InstancePath.StartsWith("MAIN"));
+        
+        var symbolNodes = new List<SymbolNode>(2);
+        foreach(var symbol in symbols) {
+            if (symbol.InstanceName is not ("MAIN" or "GVL")) continue;
+            var symbolNode = new SymbolNode(symbol);
+            LoadSymbolNode(symbol, ref symbolNode);
+            symbolNodes.Add(symbolNode);
+        }
+        return symbolNodes;
+
+        static void LoadSymbolNode(ISymbol symbol, ref SymbolNode node) {
+            node.Symbol = symbol;
+            if (symbol.SubSymbols.Count > 0) {
+                node.SubSymbolNodes = new();
+                foreach (var subSymbol in symbol.SubSymbols) {
+                    var subNode = new SymbolNode(subSymbol);
+                    node.SubSymbolNodes.Add(subNode);
+                    LoadSymbolNode(subSymbol, ref subNode);
+                }
+            }
+        }
     }
     public void Dispose()
     {
