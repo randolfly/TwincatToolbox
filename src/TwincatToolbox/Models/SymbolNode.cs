@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -13,7 +14,8 @@ namespace TwincatToolbox.Models;
 public class SymbolNode
 {
     public ObservableCollection<SymbolNode>? SubSymbolNodes { get; set; }
-    public string Name => Symbol.InstancePath;
+    public string Name => Symbol.InstanceName;
+    public string Path => Symbol.InstancePath;
     public ISymbol Symbol { get; set; }
     public SymbolNode(ISymbol symbol)
     {

@@ -12,7 +12,10 @@
     <suki:GlassCard Margin="10">
         <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Grid ColumnDefinitions="6*,*,*,*">
-                <TextBox Watermark="Search Ads Symbols">
+                <TextBox Name="SearchSymbolBar"
+                         Text="{Binding SearchText}"
+                         TextChanged="TextBox_TextChanged"
+                         Watermark="Search Ads Symbols">
                 </TextBox>
                 <Button Classes="Basic" Grid.Column="1"
                         Command="{Binding GetAvailableSymbolsCommand}"
@@ -31,7 +34,8 @@
             <Grid ColumnDefinitions="*,*">
                 <suki:GlassCard Margin="5">
                     <suki:GroupBox Header="Available Symbols" >
-                        <TreeView ItemsSource="{Binding AvailableSymbols}"
+                        <TreeView Name="AvailableSymbolTreeView"
+                                  ItemsSource="{Binding AvailableSymbols}"
                                   SelectedItems="{Binding RecordSymbols}"
                                   SelectionMode="Multiple, Toggle">
                             <TreeView.ItemTemplate>
