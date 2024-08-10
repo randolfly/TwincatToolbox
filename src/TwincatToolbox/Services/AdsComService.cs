@@ -1,11 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 
-using Avalonia.Logging;
-
+using TwinCAT;
 using TwinCAT.Ads;
+using TwinCAT.Ads.TypeSystem;
+using TwinCAT.TypeSystem;
+using TwinCAT.ValueAccess;
+
 using TwincatToolbox.Models;
 using TwincatToolbox.Services.IService;
 
@@ -51,6 +55,17 @@ public class AdsComService : IAdsComService
         Debug.WriteLine("Ads server state: {0}", GetAdsState());
     }
 
+    /// <summary>
+    /// 获取所有可行的Symbols
+    /// </summary>
+    /// <returns>符号列表</returns>
+    public IEnumerable<ISymbol> GetAvailableSymbols() {
+        var settings = new SymbolLoaderSettings(SymbolsLoadMode.Flat, 
+            ValueAccessMode.IndexGroupOffset);
+        var symbolLoader = SymbolLoaderFactory.Create(adsClient, settings);
+        var symbols = symbolLoader.Symbols;
+        return symbols.Where(s => s.InstancePath.StartsWith("MAIN"));
+    }
     public void Dispose()
     {
         adsClient.Dispose();
@@ -63,6 +78,4 @@ public class AdsComService : IAdsComService
 
         return adsServers;
     }
-
-
 }

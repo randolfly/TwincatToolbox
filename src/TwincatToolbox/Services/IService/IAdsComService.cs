@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using TwinCAT.Ads;
+using TwinCAT.TypeSystem;
+
 using TwincatToolbox.Models;
 
 namespace TwincatToolbox.Services.IService;
@@ -18,6 +19,7 @@ public interface IAdsComService : IDisposable
     public AdsState GetAdsState();
     public void ConnectAdsServer(AdsConfig adsConfig);
     public void DisconnectAdsServer();
+    public IEnumerable<ISymbol> GetAvailableSymbols();
 
     /// <summary>
     /// 扫描本地网络上的Ads服务器

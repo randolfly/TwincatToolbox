@@ -14,6 +14,7 @@
                 <TextBox Watermark="Search Ads Symbols">
                 </TextBox>
                 <Button Classes="Basic" Grid.Column="1"
+                        Command="{Binding GetAvailableSymbolsCommand}"
                         ToolTip.Tip="Get Symbols">
                     <materialIcons:MaterialIcon Kind="Check"/>
                 </Button>
@@ -30,13 +31,15 @@
                 <suki:GlassCard Margin="5">
                     <suki:GroupBox Header="Available Symbols" >
                         <ListBox SelectionMode="Multiple,Toggle"
-                                 ItemsSource="{Binding AvailableSymbol}"/>
+                                 ItemsSource="{Binding AvailableSymbols}"
+                                 SelectedItems="{Binding RecordSymbols}"/>
                     </suki:GroupBox>
                 </suki:GlassCard>
                 <suki:GlassCard Grid.Column="1" Margin="5">
                     <suki:GroupBox Header="Record Symbols">
                         <ListBox SelectionMode="Multiple,Toggle"
-                                 ItemsSource="{Binding RecordSymbol}"/>
+                                 ItemsSource="{Binding RecordSymbols}"
+                                 SelectedItems="{Binding PlotSymbols}"/>
                     </suki:GroupBox>
                 </suki:GlassCard>
 
