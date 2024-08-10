@@ -38,12 +38,13 @@
             <Grid ColumnDefinitions="*,*">
                 <suki:GlassCard Margin="5">
                     <suki:GroupBox Header="Available Symbols">
-                        <ListBox SelectionMode="Multiple,Toggle"
+                        <ListBox Name="AvailableSymbolListView"
+                                 SelectionMode="Multiple,Toggle"
                                  ItemsSource="{Binding AvailableSymbols}"
                                  SelectedItems="{Binding RecordSymbols}">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding Name}" />
+                                    <TextBlock Text="{Binding Name}"/>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
@@ -52,6 +53,7 @@
                 <suki:GlassCard Grid.Column="1"
                                 Margin="5">
                     <suki:GroupBox Header="Record Symbols">
+
                         <ListBox SelectionMode="Multiple,Toggle"
                                  ItemsSource="{Binding RecordSymbols}"
                                  SelectedItems="{Binding PlotSymbols}">
@@ -61,6 +63,7 @@
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
+
                     </suki:GroupBox>
                 </suki:GlassCard>
             </Grid>

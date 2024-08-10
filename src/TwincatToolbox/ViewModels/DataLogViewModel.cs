@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
@@ -22,12 +23,12 @@ public partial class DataLogViewModel(IAdsComService adsComService) : ViewModelB
     [RelayCommand]
     private void OnGetAvailableSymbols()
     {
-        AvailableSymbols.Clear();
         if (_adsComService.GetAdsState() == TwinCAT.Ads.AdsState.Invalid)
         {
             Debug.WriteLine("Ads server is not connected.");
             return;
         }
+        AvailableSymbols.Clear();
         var symbols = _adsComService.GetAvailableSymbols();
         foreach (var symbol in symbols)
         {
@@ -35,5 +36,14 @@ public partial class DataLogViewModel(IAdsComService adsComService) : ViewModelB
         }
 
         Debug.WriteLine("Available symbols: {0}", symbols.Count());
+    }
+
+    public IEnumerable<bool> SearchSymbols()
+    {
+        // todo: 补充模糊搜索逻辑
+        var searchResults = AvailableSymbols
+            .Select(s => s.Name.Contains(SearchText));
+        // 返回对应子项显示与否的列表
+        return searchResults;
     }
 }
