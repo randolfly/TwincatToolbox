@@ -21,7 +21,8 @@ public class AdsComService : IAdsComService
 
     private readonly AdsClient adsClient = new();
 
-    public AdsState GetAdsState() {
+    public AdsState GetAdsState()
+    {
         var adsState = AdsState.Invalid;
         try
         {
@@ -59,29 +60,35 @@ public class AdsComService : IAdsComService
     /// 获取所有可行的Symbols
     /// </summary>
     /// <returns>符号列表</returns>
-    public IEnumerable<SymbolNode> GetAvailableSymbols() {
-        var settings = new SymbolLoaderSettings(SymbolsLoadMode.VirtualTree, 
+    public List<SymbolInfo> GetAvailableSymbols()
+    {
+        var settings = new SymbolLoaderSettings(SymbolsLoadMode.VirtualTree,
             ValueAccessMode.IndexGroupOffset);
         var symbolLoader = SymbolLoaderFactory.Create(adsClient, settings);
         var symbols = symbolLoader.Symbols;
-        
-        var symbolNodes = new List<SymbolNode>(2);
-        foreach(var symbol in symbols) {
-            if (symbol.InstanceName is not ("MAIN" or "GVL")) continue;
-            var symbolNode = new SymbolNode(symbol);
-            LoadSymbolNode(symbol, ref symbolNode);
-            symbolNodes.Add(symbolNode);
-        }
-        return symbolNodes;
 
-        static void LoadSymbolNode(ISymbol symbol, ref SymbolNode node) {
-            node.Symbol = symbol;
-            if (symbol.SubSymbols.Count > 0) {
-                node.SubSymbolNodes = new();
-                foreach (var subSymbol in symbol.SubSymbols) {
-                    var subNode = new SymbolNode(subSymbol);
-                    node.SubSymbolNodes.Add(subNode);
-                    LoadSymbolNode(subSymbol, ref subNode);
+        var symbolList = new List<SymbolInfo>(2);
+        foreach (var symbol in symbols)
+        {
+            if (symbol.InstanceName is not ("MAIN" or "GVL")) continue;
+            LoadSymbolNode(new SymbolInfo(symbol), ref symbolList);
+        }
+        return symbolList;
+
+        static void LoadSymbolNode(SymbolInfo symbol, ref List<SymbolInfo> symbolList)
+        {
+            if (symbol.Symbol.SubSymbols.Count > 0)
+            {
+                foreach (var subSymbol in symbol.Symbol.SubSymbols)
+                {
+                    if (subSymbol.SubSymbols.Count > 0)
+                    {
+                        LoadSymbolNode(new SymbolInfo(subSymbol), ref symbolList);
+                    }
+                    else
+                    {
+                        symbolList.Add(new SymbolInfo(subSymbol));
+                    }
                 }
             }
         }
@@ -91,7 +98,7 @@ public class AdsComService : IAdsComService
         adsClient.Dispose();
     }
 
-    public IEnumerable<AmsNetId> ScanAdsNetwork()
+    public List<AmsNetId> ScanAdsNetwork()
     {
         // todo: 没有现成的API可以扫描本地网络上的Ads服务器(PowerShell可以实现)
         var adsServers = new List<AmsNetId>();

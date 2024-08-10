@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using TwinCAT.Ads;
-using TwinCAT.TypeSystem;
-
 using TwincatToolbox.Models;
 
 namespace TwincatToolbox.Services.IService;
@@ -15,15 +13,15 @@ public interface IAdsComService : IDisposable
     /// </summary>
     /// <value>true: 连接上; false: 未连接</value>
     public bool IsAdsConnected { get; }
-    
+
     public AdsState GetAdsState();
     public void ConnectAdsServer(AdsConfig adsConfig);
     public void DisconnectAdsServer();
-    public IEnumerable<SymbolNode> GetAvailableSymbols();
+    public List<SymbolInfo> GetAvailableSymbols();
 
     /// <summary>
     /// 扫描本地网络上的Ads服务器
     /// </summary>
     /// <returns>服务器地址(key: NetId, value: PortId)</returns>
-    public IEnumerable<AmsNetId> ScanAdsNetwork();
+    public List<AmsNetId> ScanAdsNetwork();
 }

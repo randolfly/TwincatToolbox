@@ -12,7 +12,7 @@ using CommunityToolkit.Mvvm.Input;
 using Material.Icons;
 
 using TwinCAT.Ads.TypeSystem;
-
+using TwinCAT.TypeSystem;
 using TwincatToolbox.Models;
 using TwincatToolbox.Services;
 using TwincatToolbox.Services.IService;
@@ -23,9 +23,9 @@ public partial class DataLogViewModel(IAdsComService adsComService) : ViewModelB
 {
     private readonly IAdsComService _adsComService = adsComService;
 
-    public ObservableCollection<SymbolNode> AvailableSymbols { get; } = [];
-    public ObservableCollection<SymbolNode> RecordSymbols { get; } = [];
-    public ObservableCollection<SymbolNode> PlotSymbols { get; } = [];
+    public ObservableCollection<SymbolInfo> AvailableSymbols { get; } = [];
+    public ObservableCollection<SymbolInfo> RecordSymbols { get; } = [];
+    public ObservableCollection<SymbolInfo> PlotSymbols { get; } = [];
 
     [RelayCommand]
     private void OnGetAvailableSymbols()
@@ -41,8 +41,8 @@ public partial class DataLogViewModel(IAdsComService adsComService) : ViewModelB
         {
             AvailableSymbols.Add(symbol);
         }
-        // 更新记录符号
+
         Debug.WriteLine("Available symbols: {0}", symbols.Count());
-        // 更新绘图符号
+
     }
 }
