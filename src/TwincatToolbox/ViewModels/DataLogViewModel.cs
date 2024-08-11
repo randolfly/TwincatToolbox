@@ -89,14 +89,15 @@ public partial class DataLogViewModel : ViewModelBase
                 LogSymbols.Add(symbol);
             }
         }
-        var sortedLogSymbols = LogSymbols
-            //.Select(s=>s.DeepCopy())
-            .Order(SymbolInfoComparer.Instance);
-        foreach (var symbol in sortedLogSymbols)
-        {
-            LogSymbols.Add(symbol);
-            LogSymbols.RemoveAt(0);
-        }
+        
+        //var sortedLogSymbols = LogSymbols
+        //    //.Select(s=>s.DeepCopy())
+        //    .Order(SymbolInfoComparer.Instance);
+        //foreach (var symbol in sortedLogSymbols)
+        //{
+        //    LogSymbols.Add(symbol);
+        //    LogSymbols.RemoveAt(0);
+        //}
     }
 
     private void SearchResultSelectedSymbols_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
