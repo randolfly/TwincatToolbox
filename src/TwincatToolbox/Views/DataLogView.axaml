@@ -39,8 +39,9 @@
             <Grid ColumnDefinitions="*,*">
                 <suki:GlassCard Margin="5">
                     <suki:GroupBox Header="Available Symbols">
-                        <ListBox Name="AvailableSymbolListView"
+                        <ListBox ScrollViewer.VerticalScrollBarVisibility="Visible"
                                  SelectionMode="Multiple,Toggle"
+                                 MaxHeight="350"
                                  ItemsSource="{Binding SearchResultSymbols}"
                                  SelectedItems="{Binding SearchResultSelectedSymbols}">
                             <ListBox.ItemTemplate>
@@ -54,8 +55,8 @@
                 <suki:GlassCard Grid.Column="1"
                                 Margin="5">
                     <suki:GroupBox Header="Log Symbols">
-
                         <ListBox SelectionMode="Multiple,Toggle"
+                                 MaxHeight="350"
                                  ItemsSource="{Binding LogSymbols}"
                                  SelectedItems="{Binding PlotSymbols}">
                             <ListBox.ItemTemplate>

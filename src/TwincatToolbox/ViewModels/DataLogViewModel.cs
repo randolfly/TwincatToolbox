@@ -23,7 +23,7 @@ public partial class DataLogViewModel : ViewModelBase
     private List<SymbolInfo> _availableSymbols = new();
     public ObservableCollection<SymbolInfo> SearchResultSymbols { get; } = [];
     public ObservableCollection<SymbolInfo> SearchResultSelectedSymbols { get; } = [];
-    public ObservableCollection<SymbolInfo> LogSymbols { get; } = [];
+    public ObservableCollection<SymbolInfo> LogSymbols { get; set; } = [];
     public ObservableCollection<SymbolInfo> PlotSymbols { get; } = [];
 
     public DataLogViewModel(IAdsComService adsComService)  : base("DataLog", MaterialIconKind.Blog) {
@@ -41,6 +41,7 @@ public partial class DataLogViewModel : ViewModelBase
             return;
         }
         _availableSymbols = _adsComService.GetAvailableSymbols();
+        _availableSymbols.Sort((a, b) => a.Name.CompareTo(b.Name));
         Debug.WriteLine("Available symbols: {0}", _availableSymbols.Count());
         // 更新搜索结果的Symbols
         SearchSymbols();
@@ -52,6 +53,8 @@ public partial class DataLogViewModel : ViewModelBase
         // todo: 补充模糊搜索逻辑
         var searchResults = _availableSymbols
             .Where(s => s.Name.Contains(SearchText));
+        Debug.WriteLine("Search results: {0}", searchResults.Count());
+
         SearchResultSymbols.Clear();
         foreach(var symbol in searchResults)
         {
@@ -68,7 +71,6 @@ public partial class DataLogViewModel : ViewModelBase
     }
 
     private void OnSearchResultSelectedSymbolsChanged() {
-        Debug.WriteLine("SearchResultSelectedSymbols has changed.");
         foreach(var symbol in SearchResultSymbols)
         {
             if(!SearchResultSelectedSymbols.Contains(symbol, SymbolInfoComparer.Instance) && 
@@ -81,6 +83,14 @@ public partial class DataLogViewModel : ViewModelBase
             {
                 LogSymbols.Add(symbol);
             }
+        }
+        var sortedLogSymbols = LogSymbols
+            //.Select(s=>s.DeepCopy())
+            .Order(SymbolInfoComparer.Instance);
+        foreach (var symbol in sortedLogSymbols)
+        {
+            LogSymbols.Add(symbol);
+            LogSymbols.RemoveAt(0);
         }
     }
 
