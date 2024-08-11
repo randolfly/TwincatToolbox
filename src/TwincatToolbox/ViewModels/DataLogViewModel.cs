@@ -4,10 +4,15 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+
+using Avalonia;
+
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using Material.Icons;
+
+using SukiUI.Controls;
 
 using TwincatToolbox.Extensions;
 using TwincatToolbox.Models;
@@ -96,5 +101,13 @@ public partial class DataLogViewModel : ViewModelBase
 
     private void SearchResultSelectedSymbols_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
         OnSearchResultSelectedSymbolsChanged();
+    }
+
+    [RelayCommand]
+    private void OpenLogConfigDialog() {
+        SukiHost.ShowDialog(new LogConfigControl
+        {
+            DataContext = new LogConfigViewModel()
+        });
     }
 }

@@ -27,6 +27,7 @@
                 </Button>
                 <Button Classes="Basic"
                         Grid.Column="2"
+                        Command="{Binding OpenLogConfigDialogCommand}"
                         ToolTip.Tip="Config Log">
                     <materialIcons:MaterialIcon Kind="Build" />
                 </Button>

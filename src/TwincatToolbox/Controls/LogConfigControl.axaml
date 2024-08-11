@@ -1,0 +1,56 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:suki="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+             xmlns:vm="using:TwincatToolbox.ViewModels"
+             x:Class="TwincatToolbox.LogConfigControl"
+             x:DataType="vm:LogConfigViewModel"
+             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="200">
+    <Border Margin="5">
+        <DockPanel>
+            <Grid DockPanel.Dock="Top" ShowGridLines="True"
+                  RowDefinitions="Auto,Auto" ColumnDefinitions="*,*">
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                    <TextBox Text="{Binding LogFolder}" Watermark="FolderName" IsReadOnly="True"
+                             FlowDirection="LeftToRight" ClipToBounds="True" MaxWidth="120"
+                             TextWrapping="NoWrap"/>
+                    <Button Classes="Basic" Command="{Binding SelectFolderCommand}">
+                        <materialIcons:MaterialIcon Kind="Folder"/>
+                    </Button>
+                </StackPanel>
+                <TextBox Grid.Row="0" Grid.Column="1"
+                         Text="{Binding LogFileName}"
+                         Watermark="FileName"/>
+                <NumericUpDown Grid.Row="1" Grid.Column="0"
+                               Value="{Binding LogPeriod}"
+                               Watermark="LogPeriod"/>
+                <ListBox Grid.Row="1" Grid.Column="1"
+                         SelectionMode="Toggle, Multiple"
+                         ItemsSource="{Binding AvailableLogFileTypes}"
+                         SelectedItems="{Binding LogFileTypes}">
+                    <ListBox.Styles>
+                        <Style Selector="ListBox /template/ VirtualizingStackPanel">
+                            <Setter Property="Orientation" Value="Horizontal"/>
+                        </Style>
+                    </ListBox.Styles>
+                </ListBox>
+            </Grid>
+            <StackPanel DockPanel.Dock="Bottom"
+                        Orientation="Horizontal"
+                        VerticalAlignment="Bottom"
+                        HorizontalAlignment="Center"
+                        Spacing="20">
+                <Button Content="Load" Foreground="Red" Command="{Binding LoadConfigCommand}">
+                </Button>
+                <Button Content="Save" Command="{Binding SaveConfigCommand}">
+                </Button>
+                <Button Content="Close" TextElement.Foreground="Red" Command="{Binding CloseDialogCommand}" HotKey="Escape">
+                </Button>
+            </StackPanel>
+        </DockPanel>
+
+    </Border>
+</UserControl>

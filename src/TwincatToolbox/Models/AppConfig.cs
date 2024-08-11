@@ -22,11 +22,11 @@ public class AppConfig
         FolderName = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             appName);
-        FileName = appName + ".json";
+        FileName = appName;
     }
 
     [JsonIgnore]
-    public static string ConfigFileFullName => Path.Combine(FolderName, FileName);
+    public static string ConfigFileFullName => Path.Combine(FolderName, FileName + ".json");
     #endregion
 }
 
