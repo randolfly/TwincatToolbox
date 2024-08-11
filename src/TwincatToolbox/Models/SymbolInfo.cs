@@ -1,5 +1,8 @@
 using System;
+using System.ComponentModel;
 using System.Linq;
+
+using Avalonia.Markup.Xaml.MarkupExtensions;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 

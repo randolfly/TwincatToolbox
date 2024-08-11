@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TwincatToolbox": {
+      "commandName": "Project",
+      "nativeDebugging": false
+    }
+  }
+}

@@ -5,6 +5,7 @@
              xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:suki="clr-namespace:SukiUI.Controls;assembly=SukiUI"
              xmlns:vm="using:TwincatToolbox.ViewModels"
+             xmlns:model="using:TwincatToolbox.Models"
              mc:Ignorable="d"
              d:DesignWidth="580"
              d:DesignHeight="400"
@@ -40,8 +41,8 @@
                     <suki:GroupBox Header="Available Symbols">
                         <ListBox Name="AvailableSymbolListView"
                                  SelectionMode="Multiple,Toggle"
-                                 ItemsSource="{Binding AvailableSymbols}"
-                                 SelectedItems="{Binding RecordSymbols}">
+                                 ItemsSource="{Binding SearchResultSymbols}"
+                                 SelectedItems="{Binding SearchResultSelectedSymbols}">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding Name}"/>
@@ -52,10 +53,10 @@
                 </suki:GlassCard>
                 <suki:GlassCard Grid.Column="1"
                                 Margin="5">
-                    <suki:GroupBox Header="Record Symbols">
+                    <suki:GroupBox Header="Log Symbols">
 
                         <ListBox SelectionMode="Multiple,Toggle"
-                                 ItemsSource="{Binding RecordSymbols}"
+                                 ItemsSource="{Binding LogSymbols}"
                                  SelectedItems="{Binding PlotSymbols}">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>

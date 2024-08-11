@@ -15,11 +15,11 @@ namespace TwincatToolbox.Views;
 
 public partial class DataLogView : UserControl
 {
-    private Timer _searchTimer;
+    private readonly Timer _searchTimer;
 
     public DataLogView() {
         InitializeComponent();
-        _searchTimer = new Timer(OnSearchTimerElapsed, null, Timeout.Infinite, Timeout.Infinite);
+        _searchTimer = new Timer(callback: OnSearchTimerElapsed, null, Timeout.Infinite, Timeout.Infinite);
     }
 
     private void TextBox_TextChanged(object? sender, TextChangedEventArgs e) {
@@ -32,22 +32,8 @@ public partial class DataLogView : UserControl
         {
             if (DataContext is DataLogViewModel viewModel)
             {
-                var searchResultsVisibility = viewModel.SearchSymbols();
-                // 更新搜索结果（隐藏搜索出的ListViewItem）[IsVisible=true]
-                UpdateListViewVisibility(searchResultsVisibility);
+                viewModel.SearchSymbols();
             }
         });
-    }
-
-    private void UpdateListViewVisibility(IEnumerable<bool> searchResultsVisibility) {
-        var listView = this.FindControl<ListBox>("AvailableSymbolListView");
-        if (listView != null)
-        {
-            var listViewItems = listView.GetLogicalChildren().OfType<ListBoxItem>().ToList();
-            for (var i = 0; i < listViewItems.Count; i++)
-            {
-                listViewItems[i].IsVisible = searchResultsVisibility.ElementAt(i);
-            }
-        }
     }
 }
