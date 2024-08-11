@@ -21,6 +21,8 @@
         <Style Selector="Button.Basic:pointerover materialIcons|MaterialIcon /template/ avaloniaShapes|Path">
             <Setter Property="Fill" Value="{DynamicResource SukiAccentColor}"/>
         </Style>
-
+        <Style Selector="TextBox">
+            <Setter Property="SelectionBrush" Value="Brown"/>
+        </Style>
     </Application.Styles>
 </Application>

@@ -21,6 +21,7 @@ using TwincatToolbox.Models;
 using TwincatToolbox.Services;
 using System.Diagnostics;
 using Microsoft.VisualBasic.FileIO;
+using TwincatToolbox.Constants;
 
 namespace TwincatToolbox.ViewModels;
 public partial class LogConfigViewModel : ControlModelBase
@@ -29,7 +30,7 @@ public partial class LogConfigViewModel : ControlModelBase
     [ObservableProperty] private string _logFileName = string.Empty;
     [ObservableProperty] private int _logPeriod = 2;
 
-    public List<string> AvailableLogFileTypes { get; } = ["CSV", "MAT"];
+    public List<string> AvailableLogFileTypes { get; } = AppConstants.SupportedLogFileTypes;
     public ObservableCollection<string> LogFileTypes { get; } = new();
 
     private LogConfig _logConfig;
@@ -73,9 +74,7 @@ public partial class LogConfigViewModel : ControlModelBase
         _logConfig.Period = LogPeriod;
         _logConfig.FolderName = LogFolder;
         _logConfig.FileName = LogFileName;
-        _logConfig.FileType = LogFileTypes
-            .Select(s => Enum.Parse<LogFileType>(s))
-            .ToHashSet();
+        _logConfig.FileType = LogFileTypes.ToList();
         AppConfigService.SaveConfig(AppConfig.ConfigFileFullName);
     }
 }

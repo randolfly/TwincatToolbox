@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:suki="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+             xmlns:p1="https://github.com/kikipoulet/SukiUI"
              xmlns:vm="using:TwincatToolbox.ViewModels"
              x:Class="TwincatToolbox.LogConfigControl"
              x:DataType="vm:LogConfigViewModel"
@@ -25,6 +26,9 @@
                          Text="{Binding LogFileName}"
                          Watermark="FileName"/>
                 <NumericUpDown Grid.Row="1" Grid.Column="0"
+                               p1:NumericUpDownExtensions.Unit="ms"
+                               Minimum="1"
+                               ShowButtonSpinner="True"
                                Value="{Binding LogPeriod}"
                                Watermark="LogPeriod"/>
                 <ListBox Grid.Row="1" Grid.Column="1"
