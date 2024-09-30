@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 
@@ -12,8 +11,6 @@ using CommunityToolkit.Mvvm.Input;
 using Material.Icons;
 
 using SukiUI.Controls;
-
-using TwinCAT.Ads.TypeSystem;
 
 using TwincatToolbox.Extensions;
 using TwincatToolbox.Models;
@@ -90,8 +87,18 @@ public partial class DataLogViewModel : ViewModelBase
 
     public void UpdateLogSymbol() {
         var logSearchSymbols = SearchSymbols(LogSymbols);
-        foreach (var symbol in logSearchSymbols) LogSymbols.Remove(symbol);
-        foreach (var symbol in SearchResultSelectedSymbols) LogSymbols.AddSorted(symbol, SymbolInfoComparer.Instance);
+        if(logSearchSymbols.Count > SearchResultSelectedSymbols.Count)
+        {
+            var distinctSymbols = logSearchSymbols
+                .Except(SearchResultSelectedSymbols, SymbolInfoComparer.Instance);
+            foreach (var symbol in distinctSymbols) LogSymbols.Remove(symbol);
+        }
+        else if(logSearchSymbols.Count < SearchResultSelectedSymbols.Count)
+        {
+            var distinctSymbols = SearchResultSelectedSymbols
+                .Except(logSearchSymbols, SymbolInfoComparer.Instance);
+            foreach (var symbol in distinctSymbols) LogSymbols.AddSorted(symbol, SymbolInfoComparer.Instance);
+        }
     }
 
     [RelayCommand]
