@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 
-using Avalonia;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -13,6 +12,8 @@ using CommunityToolkit.Mvvm.Input;
 using Material.Icons;
 
 using SukiUI.Controls;
+
+using TwinCAT.Ads.TypeSystem;
 
 using TwincatToolbox.Extensions;
 using TwincatToolbox.Models;
@@ -23,19 +24,45 @@ namespace TwincatToolbox.ViewModels;
 public partial class DataLogViewModel : ViewModelBase
 {
     private readonly IAdsComService _adsComService;
-    [ObservableProperty] private string _searchText = string.Empty;
 
+    [NotifyPropertyChangedFor(nameof(SearchResultSymbols))]
+    [ObservableProperty] 
+    private string _searchText = string.Empty;
+
+    [NotifyPropertyChangedFor(nameof(SearchResultSymbols))]
+    [ObservableProperty]
     private List<SymbolInfo> _availableSymbols = new();
-    public ObservableCollection<SymbolInfo> SearchResultSymbols { get; } = [];
-    public ObservableCollection<SymbolInfo> SearchResultSelectedSymbols { get; } = [];
+
+    private List<SymbolInfo> _searchResultSymbols = new();
+    public List<SymbolInfo> SearchResultSymbols { 
+        get {
+            _searchResultSymbols = SearchSymbols(AvailableSymbols);
+
+            SearchResultSelectedSymbols.CollectionChanged -= OnSearchResultSelectedSymbolsChanged;
+            SearchResultSelectedSymbols.Clear();
+            var initSearchResultSelectedSymbols = _searchResultSymbols
+                .Intersect(LogSymbols, SymbolInfoComparer.Instance);
+            foreach (var symbol in initSearchResultSelectedSymbols) SearchResultSelectedSymbols.Add(symbol);
+            SearchResultSelectedSymbols.CollectionChanged += OnSearchResultSelectedSymbolsChanged;
+
+            return _searchResultSymbols;
+        }
+    }
+      
+    [ObservableProperty]
+    private ObservableCollection<SymbolInfo> _searchResultSelectedSymbols = new();
     public ObservableCollection<SymbolInfo> LogSymbols { get; set; } = [];
     public ObservableCollection<SymbolInfo> PlotSymbols { get; } = [];
 
+
     public DataLogViewModel(IAdsComService adsComService)  : base("DataLog", MaterialIconKind.Blog) {
         _adsComService = adsComService;
-        SearchResultSelectedSymbols.CollectionChanged += SearchResultSelectedSymbols_CollectionChanged;
+        SearchResultSelectedSymbols.CollectionChanged += OnSearchResultSelectedSymbolsChanged;
     }
 
+    private void OnSearchResultSelectedSymbolsChanged(object? sender, NotifyCollectionChangedEventArgs e) {
+        UpdateLogSymbol();
+    }
 
     [RelayCommand]
     private void OnGetAvailableSymbols()
@@ -45,63 +72,26 @@ public partial class DataLogViewModel : ViewModelBase
             Debug.WriteLine("Ads server is not connected.");
             return;
         }
-        _availableSymbols = _adsComService.GetAvailableSymbols();
-        _availableSymbols.Sort((a, b) => a.Name.CompareTo(b.Name));
-        Debug.WriteLine("Available symbols: {0}", _availableSymbols.Count());
-        // 更新搜索结果的Symbols
-        SearchSymbols();
-        Debug.WriteLine("Available symbols: {0}", SearchResultSymbols.Count());
+        AvailableSymbols = _adsComService.GetAvailableSymbols();
+        AvailableSymbols.Sort((a, b) => a.Name.CompareTo(b.Name));
+        Debug.WriteLine("Available symbols: {0}", AvailableSymbols.Count());
     }
 
-    public void SearchSymbols()
+    public List<SymbolInfo> SearchSymbols(IList<SymbolInfo> sourceList)
     {
         // todo: 补充模糊搜索逻辑
-        var searchResults = _availableSymbols
-            .Where(s => s.Name.Contains(SearchText));
+        var searchResults = sourceList
+            .Where(s => s.Name.Contains(SearchText))
+            .ToList();
         Debug.WriteLine("Search results: {0}", searchResults.Count());
 
-        SearchResultSymbols.Clear();
-        foreach(var symbol in searchResults)
-        {
-            SearchResultSymbols.Add(symbol);
-        }
-        SearchResultSelectedSymbols.CollectionChanged -= SearchResultSelectedSymbols_CollectionChanged;
-        var idealSelectedItems = SearchResultSymbols.Intersect(LogSymbols, SymbolInfoComparer.Instance);
-        SearchResultSelectedSymbols.Clear();
-        foreach (var symbol in idealSelectedItems)
-        {
-            SearchResultSelectedSymbols.Add(symbol);
-        }
-        SearchResultSelectedSymbols.CollectionChanged += SearchResultSelectedSymbols_CollectionChanged;
+        return searchResults;
     }
 
-    private void OnSearchResultSelectedSymbolsChanged() {
-        foreach(var symbol in SearchResultSymbols)
-        {
-            if(!SearchResultSelectedSymbols.Contains(symbol, SymbolInfoComparer.Instance) && 
-                LogSymbols.Contains(symbol, SymbolInfoComparer.Instance))
-            {
-                LogSymbols.Remove(symbol);
-            }
-            if (SearchResultSelectedSymbols.Contains(symbol, SymbolInfoComparer.Instance) &&
-               !LogSymbols.Contains(symbol, SymbolInfoComparer.Instance))
-            {
-                LogSymbols.Add(symbol);
-            }
-        }
-        
-        //var sortedLogSymbols = LogSymbols
-        //    //.Select(s=>s.DeepCopy())
-        //    .Order(SymbolInfoComparer.Instance);
-        //foreach (var symbol in sortedLogSymbols)
-        //{
-        //    LogSymbols.Add(symbol);
-        //    LogSymbols.RemoveAt(0);
-        //}
-    }
-
-    private void SearchResultSelectedSymbols_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
-        OnSearchResultSelectedSymbolsChanged();
+    public void UpdateLogSymbol() {
+        var logSearchSymbols = SearchSymbols(LogSymbols);
+        foreach (var symbol in logSearchSymbols) LogSymbols.Remove(symbol);
+        foreach (var symbol in SearchResultSelectedSymbols) LogSymbols.AddSorted(symbol, SymbolInfoComparer.Instance);
     }
 
     [RelayCommand]

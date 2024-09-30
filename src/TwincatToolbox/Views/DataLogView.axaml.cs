@@ -15,25 +15,7 @@ namespace TwincatToolbox.Views;
 
 public partial class DataLogView : UserControl
 {
-    private readonly Timer _searchTimer;
-
     public DataLogView() {
         InitializeComponent();
-        _searchTimer = new Timer(callback: OnSearchTimerElapsed, null, Timeout.Infinite, Timeout.Infinite);
-    }
-
-    private void TextBox_TextChanged(object? sender, TextChangedEventArgs e) {
-        _searchTimer.Change(200, Timeout.Infinite); // 200ms 延迟
-    }
-
-    private void OnSearchTimerElapsed(object state) {
-        // 在 UI 线程上执行搜索命令
-        Dispatcher.UIThread.Post(() =>
-        {
-            if (DataContext is DataLogViewModel viewModel)
-            {
-                viewModel.SearchSymbols();
-            }
-        });
     }
 }

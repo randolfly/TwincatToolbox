@@ -16,9 +16,7 @@
         <StackPanel HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch">
             <Grid ColumnDefinitions="6*,*,*,*">
-                <TextBox Text="{Binding SearchText}"
-                         TextChanged="TextBox_TextChanged"
-                         Watermark="Search Ads Symbols" />
+                <TextBox Text="{Binding SearchText}" Watermark="Search Ads Symbols" />
                 <Button Classes="Basic"
                         Grid.Column="1"
                         Command="{Binding GetAvailableSymbolsCommand}"
