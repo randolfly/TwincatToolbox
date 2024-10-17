@@ -47,11 +47,14 @@ public partial class LogConfigViewModel : ControlModelBase
 
         // Start async operation to open the dialog.
         var files = await topLevel?.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions());
-        foreach(var file in files)
+        if (files != null && files.Count > 0)
         {
-            Debug.WriteLine(file.Path);
+            foreach (var file in files)
+            {
+                Debug.WriteLine(file.Path);
+            }
+            LogFolder = files[0]?.Path.AbsolutePath ?? string.Empty;
         }
-        LogFolder = files.FirstOrDefault()?.Path.AbsolutePath;
     }
 
     [RelayCommand]

@@ -48,6 +48,9 @@
     <Compile Update="Controls\LogConfigControl.axaml.cs">
       <DependentUpon>LogConfigControl.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Controls\LogPlotWindow.axaml.cs">
+      <DependentUpon>LogPlotWindow.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\DashboardView.axaml.cs">
       <DependentUpon>DashboardView.axaml</DependentUpon>
     </Compile>

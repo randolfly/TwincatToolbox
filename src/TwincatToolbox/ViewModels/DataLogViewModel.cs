@@ -3,7 +3,9 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
+using System.Timers;
 
+using Avalonia.Controls;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -85,7 +87,7 @@ public partial class DataLogViewModel : ViewModelBase
         return searchResults;
     }
 
-    public void UpdateLogSymbol() {
+    private void UpdateLogSymbol() {
         var logSearchSymbols = SearchSymbols(LogSymbols);
         if(logSearchSymbols.Count > SearchResultSelectedSymbols.Count)
         {
@@ -107,5 +109,21 @@ public partial class DataLogViewModel : ViewModelBase
         {
             DataContext = new LogConfigViewModel()
         });
+    }
+
+
+    [RelayCommand]
+    private void StartLog() {
+        int id = 0;
+
+        var logTimer = new Timer {AutoReset=true, Enabled = true, Interval = 1 };
+        var logPlotWindow = new LogPlotWindow("hello", 1000);
+        logTimer.Elapsed += (s, e) =>
+        {
+            id += 1;
+            logPlotWindow.UpdatePlot(id);
+        };
+        logTimer.Start();
+        logPlotWindow.Show();
     }
 }
