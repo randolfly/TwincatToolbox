@@ -54,7 +54,9 @@ public partial class App : Application
 
         // services
         services.AddSingleton<IAdsComService, AdsComService>();
-        
+        services.AddSingleton<ILogDataService, LogDataService>();
+        services.AddSingleton<ILogPlotService, LogPlotService>();
+
         // viewmodels
         if (viewLocator != null)
             services.AddSingleton(viewLocator);

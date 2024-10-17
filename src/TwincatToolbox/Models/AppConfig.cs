@@ -16,10 +16,15 @@ public class AppConfig
     public LogConfig LogConfig { get; set; } = new();
 
     #region 配置文件存储路径
-    public static string FolderName => Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-    public static string FileName => Assembly.GetCallingAssembly().FullName!.Split(',')[0];
+    public static string AppName => Assembly.GetCallingAssembly().FullName!.Split(',')[0];
 
-    public static string ConfigFileFullName => Path.Combine(FolderName, FileName + ".json");
+    public static string FolderName => Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+        AppName
+    );
+
+    public static string FileName => AppName + ".json";
+    public static string ConfigFileFullName => Path.Combine(FolderName, FileName);
     #endregion
 }
 

@@ -16,11 +16,11 @@ public class LogDataService : ILogDataService {
     public Dictionary<string, LogDataChannel> LogDict => _logDict;
 
     public void AddChannel(string channelName) {
-        _logDict.Add(channelName, new LogDataChannel(BufferCapacity));
+        _logDict.Add(channelName, new LogDataChannel(BufferCapacity, channelName));
     }
 
-    public void RemoveAllChannel() {
-
+    public void RemoveAllChannels() {
+        _logDict.Clear();
     }
     
     public void AddData(string channelName, double data) {

@@ -1,3 +1,5 @@
+using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -14,8 +16,11 @@ using Material.Icons;
 
 using SukiUI.Controls;
 
+using TwinCAT.Ads;
+
 using TwincatToolbox.Extensions;
 using TwincatToolbox.Models;
+using TwincatToolbox.Services;
 using TwincatToolbox.Services.IService;
 
 namespace TwincatToolbox.ViewModels;
@@ -23,9 +28,13 @@ namespace TwincatToolbox.ViewModels;
 public partial class DataLogViewModel : ViewModelBase
 {
     private readonly IAdsComService _adsComService;
+    private readonly ILogDataService _logDataService;
+    private readonly ILogPlotService _logPlotService;
+
+    #region log and plot symbols
 
     [NotifyPropertyChangedFor(nameof(SearchResultSymbols))]
-    [ObservableProperty] 
+    [ObservableProperty]
     private string _searchText = string.Empty;
 
     [NotifyPropertyChangedFor(nameof(SearchResultSymbols))]
@@ -33,8 +42,10 @@ public partial class DataLogViewModel : ViewModelBase
     private List<SymbolInfo> _availableSymbols = new();
 
     private List<SymbolInfo> _searchResultSymbols = new();
-    public List<SymbolInfo> SearchResultSymbols { 
-        get {
+    public List<SymbolInfo> SearchResultSymbols
+    {
+        get
+        {
             _searchResultSymbols = SearchSymbols(AvailableSymbols);
 
             SearchResultSelectedSymbols.CollectionChanged -= OnSearchResultSelectedSymbolsChanged;
@@ -47,15 +58,22 @@ public partial class DataLogViewModel : ViewModelBase
             return _searchResultSymbols;
         }
     }
-      
+
     [ObservableProperty]
     private ObservableCollection<SymbolInfo> _searchResultSelectedSymbols = new();
     public ObservableCollection<SymbolInfo> LogSymbols { get; set; } = [];
     public ObservableCollection<SymbolInfo> PlotSymbols { get; } = [];
 
+    #endregion
 
-    public DataLogViewModel(IAdsComService adsComService)  : base("DataLog", MaterialIconKind.Blog) {
+    private Dictionary<uint, SymbolInfo> _symbolsDict = [];
+
+    public DataLogViewModel(IAdsComService adsComService,
+        ILogDataService logDataService, ILogPlotService logPlotService)
+        : base("DataLog", MaterialIconKind.Blog) {
         _adsComService = adsComService;
+        _logDataService = logDataService;
+        _logPlotService = logPlotService;
         SearchResultSelectedSymbols.CollectionChanged += OnSearchResultSelectedSymbolsChanged;
     }
 
@@ -64,8 +82,7 @@ public partial class DataLogViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void OnGetAvailableSymbols()
-    {
+    private void OnGetAvailableSymbols() {
         if (_adsComService.GetAdsState() == TwinCAT.Ads.AdsState.Invalid)
         {
             Debug.WriteLine("Ads server is not connected.");
@@ -76,8 +93,7 @@ public partial class DataLogViewModel : ViewModelBase
         Debug.WriteLine("Available symbols: {0}", AvailableSymbols.Count());
     }
 
-    public List<SymbolInfo> SearchSymbols(IList<SymbolInfo> sourceList)
-    {
+    public List<SymbolInfo> SearchSymbols(IList<SymbolInfo> sourceList) {
         // todo: ²¹³äÄ£ºýËÑË÷Âß¼­
         var searchResults = sourceList
             .Where(s => s.Name.Contains(SearchText))
@@ -89,13 +105,13 @@ public partial class DataLogViewModel : ViewModelBase
 
     private void UpdateLogSymbol() {
         var logSearchSymbols = SearchSymbols(LogSymbols);
-        if(logSearchSymbols.Count > SearchResultSelectedSymbols.Count)
+        if (logSearchSymbols.Count > SearchResultSelectedSymbols.Count)
         {
             var distinctSymbols = logSearchSymbols
                 .Except(SearchResultSelectedSymbols, SymbolInfoComparer.Instance);
             foreach (var symbol in distinctSymbols) LogSymbols.Remove(symbol);
         }
-        else if(logSearchSymbols.Count < SearchResultSelectedSymbols.Count)
+        else if (logSearchSymbols.Count < SearchResultSelectedSymbols.Count)
         {
             var distinctSymbols = SearchResultSelectedSymbols
                 .Except(logSearchSymbols, SymbolInfoComparer.Instance);
@@ -111,19 +127,47 @@ public partial class DataLogViewModel : ViewModelBase
         });
     }
 
-
     [RelayCommand]
     private void StartLog() {
-        int id = 0;
-
-        var logTimer = new Timer {AutoReset=true, Enabled = true, Interval = 1 };
-        var logPlotWindow = new LogPlotWindow("hello", 10000);
-        logTimer.Elapsed += (s, e) =>
+        if (LogSymbols.Count == 0)
         {
-            id += 1;
-            logPlotWindow.UpdatePlot(id);
+            Debug.WriteLine("No symbol selected for logging.");
+            return;
+        }
+        _symbolsDict.Clear();
+        _logDataService.RemoveAllChannels();
+        foreach (var symbol in LogSymbols)
+        {
+            var notificationHandle = _adsComService.AddDeviceNotification(
+                symbol.Symbol.InstancePath,
+                symbol.Symbol.ByteSize,
+                new NotificationSettings(AdsTransMode.Cyclic,
+                AppConfigService.AppConfig.LogConfig.Period, 0));
+            _symbolsDict.Add(notificationHandle, symbol);
+            _logDataService.AddChannel(symbol.Name);
+        }
+
+        _logPlotService.RemoveAllChannels();
+        foreach (var symbol in PlotSymbols)
+        {
+            _logPlotService.AddChannel(symbol.Name);
+        }
+
+        _adsComService.AddNotificationHandler(AdsNotificationHandler);
+    }
+
+    private void AdsNotificationHandler(object? sender, AdsNotificationEventArgs e) {
+        double data = 0.0d;
+        data = e.Data.Length switch
+        {
+            1 => BitConverter.ToBoolean(e.Data.Span) ? 1 : 0,
+            2 => BinaryPrimitives.ReadInt16LittleEndian(e.Data.Span),
+            4 => BinaryPrimitives.ReadInt32LittleEndian(e.Data.Span),
+            8 => BinaryPrimitives.ReadDoubleLittleEndian(e.Data.Span),
+            _ => 0
         };
-        logTimer.Start();
-        logPlotWindow.Show();
+        var symbol = _symbolsDict[e.Handle];
+        _logDataService.AddData(symbol.Name, data);
+        _logPlotService.AddData(symbol.Name, data);
     }
 }

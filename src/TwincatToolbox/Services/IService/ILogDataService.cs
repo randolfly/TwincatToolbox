@@ -19,14 +19,14 @@ public interface ILogDataService
 
     public void AddChannel(string channelName);
     public void AddData(string channelName, double data);
-    public void RemoveAllChannel();
+    public void RemoveAllChannels();
 
 }
 
-public class LogDataChannel(int bufferCapacity)
+public class LogDataChannel(int bufferCapacity, string channelName)
 {
 
-    public string Name { get; set; } = string.Empty;
+    public string Name { get; set; } = channelName;
     public string? Description { get; set; }
     public int BufferCapacity { get; set; } = bufferCapacity;
 
@@ -34,7 +34,7 @@ public class LogDataChannel(int bufferCapacity)
     {
         get
         {
-            var path = Path.Combine(AppConfig.FolderName, "tmp/");
+            var path = Path.Combine(AppConfig.FolderName, AppConfig.FolderName , "tmp/");
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
@@ -62,7 +62,7 @@ public class LogDataChannel(int bufferCapacity)
         if ((_buffer.Size * 2) >= _buffer.Capacity)
         {
             var dataSrc = _buffer.RemoveRange(_buffer.Size);
-            Task.Run(() => SaveToFile(dataSrc, FilePath));
+            SaveToFile(dataSrc, FilePath);
         }
     }
 

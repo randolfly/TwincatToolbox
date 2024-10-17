@@ -19,6 +19,10 @@ public interface IAdsComService : IDisposable
     public void DisconnectAdsServer();
     public List<SymbolInfo> GetAvailableSymbols();
 
+    public void AddNotificationHandler(EventHandler<AdsNotificationEventArgs> handler);
+    public void RemoveNotificationHandler(EventHandler<AdsNotificationEventArgs> handler);
+    public uint AddDeviceNotification(string path, int byteSize, NotificationSettings settings);
+
     /// <summary>
     /// 扫描本地网络上的Ads服务器
     /// </summary>

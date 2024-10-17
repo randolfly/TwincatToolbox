@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using TwincatToolbox.Services.IService;
 
 namespace TwincatToolbox.Services;
-public class GraphService
+public class LogPlotService : ILogPlotService
 {
     public int PlotBufferCapacity { get; } = 5000;
 
@@ -20,16 +20,18 @@ public class GraphService
         logPlotWindow.Show();
     }
 
-    public void RemoveAllChannel() {
-
+    public void RemoveAllChannels() {
+        foreach (var plot in _plotDict.Values)
+        {
+            plot.Close();
+        }
+        _plotDict.Clear();
     }
 
     public void AddData(string channelName, double data) {
         if (_plotDict.ContainsKey(channelName))
         {
-            _plotDict[channelName].Add(data);
+            _plotDict[channelName].UpdatePlot(data);
         }
     }
-
-
 }

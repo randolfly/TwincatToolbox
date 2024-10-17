@@ -92,12 +92,23 @@ public class AdsComService : IAdsComService
         adsClient.Dispose();
     }
 
-
-
     public List<AmsNetId> ScanAdsNetwork() {
         // todo: 没有现成的API可以扫描本地网络上的Ads服务器(PowerShell可以实现)
         var adsServers = new List<AmsNetId>();
 
         return adsServers;
+    }
+
+    public void AddNotificationHandler(EventHandler<AdsNotificationEventArgs> handler) {
+        adsClient.AdsNotification += handler;
+    }
+
+    public void RemoveNotificationHandler(EventHandler<AdsNotificationEventArgs> handler) {
+        adsClient.AdsNotification -= handler;
+    }
+
+    public uint AddDeviceNotification(string path, int byteSize, NotificationSettings settings) {
+        var notificationHandle = adsClient.AddDeviceNotification(path, byteSize, settings, null);
+        return notificationHandle;
     }
 }
