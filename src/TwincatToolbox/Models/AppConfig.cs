@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text.Json.Serialization;
+
 using TwinCAT.Ads;
 
 using TwincatToolbox.Constants;
@@ -15,19 +16,9 @@ public class AppConfig
     public LogConfig LogConfig { get; set; } = new();
 
     #region 配置文件存储路径
-    public static readonly string FolderName;
-    public static readonly string FileName;
+    public static string FolderName => Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+    public static string FileName => Assembly.GetCallingAssembly().FullName!.Split(',')[0];
 
-    static AppConfig()
-    {
-        var appName = Assembly.GetCallingAssembly().FullName!.Split(',')[0];
-        FolderName = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            appName);
-        FileName = appName;
-    }
-
-    [JsonIgnore]
     public static string ConfigFileFullName => Path.Combine(FolderName, FileName + ".json");
     #endregion
 }

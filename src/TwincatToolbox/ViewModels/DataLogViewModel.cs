@@ -117,7 +117,7 @@ public partial class DataLogViewModel : ViewModelBase
         int id = 0;
 
         var logTimer = new Timer {AutoReset=true, Enabled = true, Interval = 1 };
-        var logPlotWindow = new LogPlotWindow("hello", 1000);
+        var logPlotWindow = new LogPlotWindow("hello", 10000);
         logTimer.Elapsed += (s, e) =>
         {
             id += 1;
