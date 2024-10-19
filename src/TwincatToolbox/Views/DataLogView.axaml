@@ -5,41 +5,77 @@
              xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:suki="clr-namespace:SukiUI.Controls;assembly=SukiUI"
              xmlns:vm="using:TwincatToolbox.ViewModels"
-             mc:Ignorable="d" d:DesignWidth="580" d:DesignHeight="400"
+             xmlns:model="using:TwincatToolbox.Models"
+             mc:Ignorable="d"
+             d:DesignWidth="580"
+             d:DesignHeight="400"
              x:DataType="vm:DataLogViewModel"
-             x:Class="TwincatToolbox.Views.DataLogView">
+             x:Class="TwincatToolbox.Views.DataLogView"
+             xmlns:avalonia_controls="using:Avalonia.Controls">
     <suki:GlassCard Margin="10">
-        <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <Grid ColumnDefinitions="6*,*,*,*">
-                <TextBox Watermark="Search Ads Symbols">
-                </TextBox>
-                <Button Classes="Basic" Grid.Column="1"
+        <StackPanel HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch">
+            <Grid ColumnDefinitions="6*,*,*,*,*">
+                <TextBox Text="{Binding SearchText}"
+                         IsEnabled="{Binding IsLoggingStopped}"
+                         Watermark="Search Ads Symbols" />
+                <Button Classes="Basic"
+                        Grid.Column="1"
+                        Command="{Binding GetAvailableSymbolsCommand}"
                         ToolTip.Tip="Get Symbols">
-                    <materialIcons:MaterialIcon Kind="Check"/>
+                    <materialIcons:MaterialIcon Kind="Check" />
                 </Button>
-                <Button Classes="Basic" Grid.Column="2"
+                <Button Classes="Basic"
+                        Grid.Column="2"
+                        Command="{Binding OpenLogConfigDialogCommand}"
                         ToolTip.Tip="Config Log">
-                    <materialIcons:MaterialIcon Kind="Build"/>
+                    <materialIcons:MaterialIcon Kind="Build" />
                 </Button>
-                <Button Classes="Basic" Grid.Column="3"
+                <Button Classes="Basic"
+                        Grid.Column="3"
+                        Command="{Binding StartLogCommand}"
                         ToolTip.Tip="Start Log">
-                    <materialIcons:MaterialIcon Kind="Play"/>
+                    <materialIcons:MaterialIcon Kind="Play" />
+                </Button>
+                <Button Classes="Basic"
+                        Grid.Column="4"
+                        Command="{Binding StopLogCommand}"
+                        ToolTip.Tip="Stop Log">
+                    <materialIcons:MaterialIcon Kind="Stop" />
                 </Button>
             </Grid>
-            <Grid ColumnDefinitions="*,*">
+            <Grid ColumnDefinitions="*,*" IsEnabled="{Binding IsLoggingStopped}">
                 <suki:GlassCard Margin="5">
-                    <suki:GroupBox Header="Available Symbols" >
-                        <ListBox SelectionMode="Multiple,Toggle"
-                                 ItemsSource="{Binding AvailableSymbol}"/>
+                    <suki:GroupBox Header="Available Symbols">
+                        <ListBox ScrollViewer.VerticalScrollBarVisibility="Visible"
+                                 SelectionMode="Multiple,Toggle"
+                                 MaxHeight="350"
+                                 ItemsSource="{Binding SearchResultSymbols}"
+                                 SelectedItems="{Binding SearchResultSelectedSymbols}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Name}"/>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
                     </suki:GroupBox>
                 </suki:GlassCard>
-                <suki:GlassCard Grid.Column="1" Margin="5">
-                    <suki:GroupBox Header="Record Symbols">
+                <suki:GlassCard Grid.Column="1"
+                                Margin="5">
+                    <suki:GroupBox Header="Log Symbols">
                         <ListBox SelectionMode="Multiple,Toggle"
-                                 ItemsSource="{Binding RecordSymbol}"/>
-                    </suki:GroupBox>
-                </suki:GlassCard>
+                                 MaxHeight="350"
+                                 ItemsSource="{Binding LogSymbols}"
+                                 SelectedItems="{Binding PlotSymbols}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Name}" />
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
 
+                    </suki:GroupBox>
+                </suki:GlassCard>
             </Grid>
         </StackPanel>
     </suki:GlassCard>

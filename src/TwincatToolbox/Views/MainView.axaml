@@ -9,7 +9,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="600"
-    BackgroundStyle="Gradient"
+    BackgroundStyle="Bubble"
     Title="TwinCAT ToolBox"
     Icon="avares://TwincatToolbox/Assets/avalonia-logo.ico"
     Width="900" Height="600" x:DataType="vm:MainViewModel">

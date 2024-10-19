@@ -4,6 +4,8 @@ using System.ComponentModel;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 
+using TwincatToolbox.Models;
+
 namespace TwincatToolbox;
 public class ViewLocator : IDataTemplate
 {

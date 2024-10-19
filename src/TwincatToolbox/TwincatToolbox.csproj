@@ -6,11 +6,15 @@
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <ApplicationIcon>Assets\avalonia-logo.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Extensions\" />
     <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\avalonia-logo.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,6 +29,8 @@
     <PackageReference Include="Beckhoff.TwinCAT.Ads" Version="6.1.260" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
     <PackageReference Include="Material.Icons.Avalonia" Version="2.1.10" />
+    <PackageReference Include="MathNet.Numerics" Version="6.0.0-beta1" />
+    <PackageReference Include="MathNet.Numerics.Data.Matlab" Version="6.0.0-beta1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0-preview.6.24327.7" />
     <PackageReference Include="ScottPlot.Avalonia" Version="5.0.37" />
   </ItemGroup>
@@ -46,6 +52,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Controls\LogConfigControl.axaml.cs">
+      <DependentUpon>LogConfigControl.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Controls\LogPlotWindow.axaml.cs">
+      <DependentUpon>LogPlotWindow.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\DashboardView.axaml.cs">
       <DependentUpon>DashboardView.axaml</DependentUpon>
     </Compile>

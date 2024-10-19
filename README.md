@@ -1,27 +1,65 @@
+- [中文介绍](doc/README_zh.md)
+## TLDR 🌊
 
-## TLDR 🐱‍👤
+Provide a swiss knife for [Beckhoff | New Automation Technology | Beckhoff Worldwide](https://www.beckhoff.com/en-en/) development, main functionalities are listed below:
 
-提供一个开发[Beckhoff | New Automation Technology | Beckhoff Worldwide](https://www.beckhoff.com/en-en/)的“瑞士军刀”，主要具备下面的功能：
-
-- [ ] 连接倍福ADS Host，读写相关变量
-- [ ] 按照指定频率采集变量数据，实时显示，支持数据导出
-- [ ] 提供一个第三方的倍福界面HMI
+- [x] connect to the TwinCAT ADS Host
+- [x] log and plot the specified symbols with predefined frequency
+	- support real-time data log(min 1ms)
+	- support real-time data backup
+	- support real-time data plot
+- [ ] provide a 3rd-party TwinCAT HMI library
 
 ## About 😸
 
-本工具箱是在[randolfly/LabDataToolbox (github.com)](https://github.com/randolfly/LabDataToolbox)的基础上进行修改的，主要是为了解决开发倍福程序过程中的以下痛点：
+This software is modified from [randolfly/LabDataToolbox (github.com)](https://github.com/randolfly/LabDataToolbox), which is mainly used to handle problems in such cases:
 
-1. 使用scope进行数据记录时偶尔出现==死机==的现象！
-2. 想观察某个变量的值，但是不想将其显示在HMI界面上
-3. 想修改某个变量的值，但是不想进入倍福的变量监控界面进行修改
-4. …
+1. TwinCAT scope sometimes weirdly causes Windows crash...
+2. I want to have a lightweight version of TwinCAT scope 
+3. I want to check/modify a symbol value with a nicer UI than default HMI
 
-如果你也遇见了上面的一系列问题，那么可以尝试一下本工具箱！
+If you encounter such problems, welcome to try this toolbox!
 
-### 界面简介 🐶
+This toolbox has such characteristics:
 
-![](Pasted%20image%2020240809223120.png)
-## Todo 🐱‍🏍
+1. developed by native language, have small memory usage(about 200MB) and running stable
+2. supports comprehensive data acquisition features, including 
+	1. visual data selection
+	2. real-time data backup
+	3. dynamic display of data during the acquisition process
+	4. customizable data storage types(`csv` and `mat`)
 
-- [ ] 设计工具箱基础界面和代码框架
+### Functions Overview 🐶
+
+#### Connection to TwinCAT 🍔
+
+![basic ui](./doc/assets/example-00.jpg)
+
+- configuration of TwinCAT ADS connection params
+- visual selection of log/plot symbols list(support search selection)
+- configuration of log params
+
+![](./doc/assets/Pasted%20image%2020241019205935.png)
+#### Real-Time Data Log and Plot 🍟 
+
+> pop up plot data windows
+
+![](./doc/assets/example-02.jpg)
+
+After clicking the "End Data Acquisition" button to complete the data collection, all the data results from the experiment will be displayed. The following is a screenshot of an experimental data set lasting approximately 700 seconds. The interface provides the following functions:
+- Left-click and drag: Pan the view
+- Middle-click and drag: Zoom the view
+- Middle-click: Automatically set the view size
+- Right-click: Bring up the menu
+
+
+![](./doc/assets/example-01.jpg)
+
+Additionally, the log data will be storage to the specified directory, 2 types of log are supported:
+- csv
+- mat
+
+Temporary data recorded during the operation is stored in `%AppData\Local\TwincatToolbox\tmp`. This data will be automatically deleted after the data recording is completed.
+
+> The software configuration file is: `%AppData\Local\TwincatToolbox\TwincatToolbox.json`.If you need to migrate to a new computer, you can copy this file to transfer the data.
 

@@ -7,9 +7,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwincatToolbox.Test", "TwincatToolbox.Test\TwincatToolbox.Test.csproj", "{A455F971-C616-4F40-B509-1FC9EC33F7D0}"
 EndProject
 Global
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {0C01F160-11F5-4346-B2BD-AECDBED0AEF1}
-	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{4C7C4C6E-207F-468E-9FF1-71C93178E7D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4C7C4C6E-207F-468E-9FF1-71C93178E7D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
@@ -26,5 +23,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0C01F160-11F5-4346-B2BD-AECDBED0AEF1}
 	EndGlobalSection
 EndGlobal

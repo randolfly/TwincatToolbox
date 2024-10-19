@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text.Json.Serialization;
+
 using TwinCAT.Ads;
+
+using TwincatToolbox.Constants;
 
 namespace TwincatToolbox.Models;
 
@@ -13,19 +16,14 @@ public class AppConfig
     public LogConfig LogConfig { get; set; } = new();
 
     #region 配置文件存储路径
-    public static readonly string FolderName;
-    public static readonly string FileName;
+    public static string AppName => Assembly.GetCallingAssembly().FullName!.Split(',')[0];
 
-    static AppConfig()
-    {
-        var appName = Assembly.GetCallingAssembly().FullName!.Split(',')[0];
-        FolderName = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            appName);
-        FileName = appName + ".json";
-    }
+    public static string FolderName => Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+        AppName
+    );
 
-    [JsonIgnore]
+    public static string FileName => AppName + ".json";
     public static string ConfigFileFullName => Path.Combine(FolderName, FileName);
     #endregion
 }
@@ -40,10 +38,9 @@ public class LogConfig
 {
     // 记录日志的周期，单位：毫秒，默认2ms
     public int Period { get; set; } = 2;
-    public HashSet<LogFileType> FileType { get; set; } = [LogFileType.CSV, LogFileType.MAT];
-
-    public HashSet<string> LogSymbols { get; set; } = new();
-    public HashSet<string> PlotSymbols { get; set; } = new();
+    public List<string> FileType { get; set; } = AppConstants.SupportedLogFileTypes;
+    public List<string> LogSymbols { get; set; } = new();
+    public List<string> PlotSymbols { get; set; } = new();
 
     public string FolderName { get; set; } = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
     public string FileName { get; set; } = "log";
@@ -61,10 +58,4 @@ public class LogConfig
             return Path.Combine(FolderName, fileName);
         }
     }
-}
-
-public enum LogFileType
-{
-    CSV,
-    MAT
 }
