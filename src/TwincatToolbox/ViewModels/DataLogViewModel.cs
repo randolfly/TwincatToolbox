@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Timers;
 
 using Avalonia.Controls;
@@ -27,6 +28,8 @@ namespace TwincatToolbox.ViewModels;
 
 public partial class DataLogViewModel : ViewModelBase
 {
+    private LogConfig _logConfig;
+
     private readonly IAdsComService _adsComService;
     private readonly ILogDataService _logDataService;
     private readonly ILogPlotService _logPlotService;
@@ -51,7 +54,7 @@ public partial class DataLogViewModel : ViewModelBase
             SearchResultSelectedSymbols.CollectionChanged -= OnSearchResultSelectedSymbolsChanged;
             SearchResultSelectedSymbols.Clear();
             var initSearchResultSelectedSymbols = _searchResultSymbols
-                .Intersect(LogSymbols, SymbolInfoComparer.Instance);
+            .Intersect(LogSymbols, SymbolInfoComparer.Instance);
             foreach (var symbol in initSearchResultSelectedSymbols) SearchResultSelectedSymbols.Add(symbol);
             SearchResultSelectedSymbols.CollectionChanged += OnSearchResultSelectedSymbolsChanged;
 
@@ -63,17 +66,23 @@ public partial class DataLogViewModel : ViewModelBase
     private ObservableCollection<SymbolInfo> _searchResultSelectedSymbols = new();
     public ObservableCollection<SymbolInfo> LogSymbols { get; set; } = [];
     public ObservableCollection<SymbolInfo> PlotSymbols { get; } = [];
+    private bool _isFirstGetAvailableSymbols = true;
 
+    [ObservableProperty]
+    private bool _isLoggingStopped = true;
     #endregion
 
     private Dictionary<uint, SymbolInfo> _symbolsDict = [];
 
     public DataLogViewModel(IAdsComService adsComService,
-        ILogDataService logDataService, ILogPlotService logPlotService)
-        : base("DataLog", MaterialIconKind.Blog) {
+    ILogDataService logDataService, ILogPlotService logPlotService)
+    : base("DataLog", MaterialIconKind.Blog) {
         _adsComService = adsComService;
         _logDataService = logDataService;
         _logPlotService = logPlotService;
+
+        _logConfig = AppConfigService.AppConfig.LogConfig;
+
         SearchResultSelectedSymbols.CollectionChanged += OnSearchResultSelectedSymbolsChanged;
     }
 
@@ -91,12 +100,33 @@ public partial class DataLogViewModel : ViewModelBase
         AvailableSymbols = _adsComService.GetAvailableSymbols();
         AvailableSymbols.Sort((a, b) => a.Name.CompareTo(b.Name));
         Debug.WriteLine("Available symbols: {0}", AvailableSymbols.Count());
+
+        if (_isFirstGetAvailableSymbols)
+        {
+            InitLogAndPlotSymbolsWithConfig(_logConfig);
+            _isFirstGetAvailableSymbols = false;
+        }
+    }
+
+    private void InitLogAndPlotSymbolsWithConfig(LogConfig logConfig) {
+        LogSymbols.Clear();
+        foreach (var symbolName in logConfig.LogSymbols)
+        {
+            LogSymbols.AddSorted(AvailableSymbols.Find(s => s.Name == symbolName),
+                SymbolInfoComparer.Instance);
+        }
+        PlotSymbols.Clear();
+        foreach (var symbolName in logConfig.PlotSymbols)
+        {
+            PlotSymbols.AddSorted(AvailableSymbols.Find(s => s.Name == symbolName),
+                SymbolInfoComparer.Instance);
+        }
     }
 
     public List<SymbolInfo> SearchSymbols(IList<SymbolInfo> sourceList) {
         // todo: ²¹³äÄ£ºýËÑË÷Âß¼­
         var searchResults = sourceList
-            .Where(s => s.Name.Contains(SearchText))
+.Where(s => s.Name.Contains(SearchText))
             .ToList();
         Debug.WriteLine("Search results: {0}", searchResults.Count());
 
@@ -108,13 +138,13 @@ public partial class DataLogViewModel : ViewModelBase
         if (logSearchSymbols.Count > SearchResultSelectedSymbols.Count)
         {
             var distinctSymbols = logSearchSymbols
-                .Except(SearchResultSelectedSymbols, SymbolInfoComparer.Instance);
+            .Except(SearchResultSelectedSymbols, SymbolInfoComparer.Instance);
             foreach (var symbol in distinctSymbols) LogSymbols.Remove(symbol);
         }
         else if (logSearchSymbols.Count < SearchResultSelectedSymbols.Count)
         {
             var distinctSymbols = SearchResultSelectedSymbols
-                .Except(logSearchSymbols, SymbolInfoComparer.Instance);
+            .Except(logSearchSymbols, SymbolInfoComparer.Instance);
             foreach (var symbol in distinctSymbols) LogSymbols.AddSorted(symbol, SymbolInfoComparer.Instance);
         }
     }
@@ -139,10 +169,10 @@ public partial class DataLogViewModel : ViewModelBase
         foreach (var symbol in LogSymbols)
         {
             var notificationHandle = _adsComService.AddDeviceNotification(
-                symbol.Symbol.InstancePath,
-                symbol.Symbol.ByteSize,
-                new NotificationSettings(AdsTransMode.Cyclic,
-                AppConfigService.AppConfig.LogConfig.Period, 0));
+            symbol.Symbol.InstancePath,
+            symbol.Symbol.ByteSize,
+            new NotificationSettings(AdsTransMode.Cyclic,
+            AppConfigService.AppConfig.LogConfig.Period, 0));
             _symbolsDict.Add(notificationHandle, symbol);
             _logDataService.AddChannel(symbol.Name);
         }
@@ -150,13 +180,42 @@ public partial class DataLogViewModel : ViewModelBase
         _logPlotService.RemoveAllChannels();
         foreach (var symbol in PlotSymbols)
         {
-            _logPlotService.AddChannel(symbol.Name);
+            // show 3s data
+            _logPlotService.AddChannel(symbol.Name,
+                (int)Math.Floor(3000.0 / _logConfig.Period));
         }
+
+        ExportLogConfig();
+        IsLoggingStopped = false;
 
         _adsComService.AddNotificationHandler(AdsNotificationHandler);
     }
 
-    private void AdsNotificationHandler(object? sender, AdsNotificationEventArgs e) {
+    private void ExportLogConfig() {
+        _logConfig.LogSymbols = LogSymbols.Select(s => s.Name).ToList();
+        _logConfig.PlotSymbols = PlotSymbols.Select(s => s.Name).ToList();
+        AppConfigService.SaveConfig(AppConfig.ConfigFileFullName);
+    }
+
+    [RelayCommand]
+    private async Task StopLogAsync() {
+        _adsComService.RemoveNotificationHandler(AdsNotificationHandler);
+
+        _symbolsDict.Keys.ToList().ForEach(handle =>
+            _adsComService.RemoveDeviceNotification(handle));
+        _symbolsDict.Clear();
+
+        // load data from tmp folder
+        var logResult = await _logDataService.LoadAllChannelsAsync();
+        _logDataService.DeleteTmpFiles();
+        // export
+        await _logDataService.ExportDataAsync(logResult, _logConfig.FileFullName, _logConfig.FileType);
+        // plot
+        _logPlotService.ShowAllChannelsWithNewData(logResult, _logConfig.Period);
+        IsLoggingStopped = true;
+    }
+
+    private async void AdsNotificationHandler(object? sender, AdsNotificationEventArgs e) {
         double data = 0.0d;
         data = e.Data.Length switch
         {
@@ -167,7 +226,8 @@ public partial class DataLogViewModel : ViewModelBase
             _ => 0
         };
         var symbol = _symbolsDict[e.Handle];
-        _logDataService.AddData(symbol.Name, data);
+
+        await _logDataService.AddDataAsync(symbol.Name, data);
         _logPlotService.AddData(symbol.Name, data);
     }
 }

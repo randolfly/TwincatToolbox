@@ -9,13 +9,12 @@ using TwincatToolbox.Services.IService;
 namespace TwincatToolbox.Services;
 public class LogPlotService : ILogPlotService
 {
-    public int PlotBufferCapacity { get; } = 5000;
 
     private readonly Dictionary<string, LogPlotWindow> _plotDict = [];
     public Dictionary<string, LogPlotWindow> PlotDict => _plotDict;
 
-    public void AddChannel(string channelName) {
-        var logPlotWindow = new LogPlotWindow(channelName, PlotBufferCapacity);
+    public void AddChannel(string channelName, int plotBufferCapacity) {
+        var logPlotWindow = new LogPlotWindow(channelName, plotBufferCapacity);
         _plotDict.Add(channelName, logPlotWindow);
         logPlotWindow.Show();
     }
@@ -32,6 +31,16 @@ public class LogPlotService : ILogPlotService
         if (_plotDict.ContainsKey(channelName))
         {
             _plotDict[channelName].UpdatePlot(data);
+        }
+    }
+
+    public void ShowAllChannelsWithNewData(Dictionary<string, List<double>> dataSrcDict, int sampleTime = 1) {
+        foreach (var (channelName, data) in dataSrcDict)
+        {
+            if (_plotDict.ContainsKey(channelName))
+            {
+                _plotDict[channelName].ShowAllData(data.ToArray(), sampleTime);
+            }
         }
     }
 }

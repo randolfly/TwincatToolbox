@@ -23,6 +23,8 @@ public interface IAdsComService : IDisposable
     public void RemoveNotificationHandler(EventHandler<AdsNotificationEventArgs> handler);
     public uint AddDeviceNotification(string path, int byteSize, NotificationSettings settings);
 
+    public void RemoveDeviceNotification(uint notificationHandle);
+
     /// <summary>
     /// 扫描本地网络上的Ads服务器
     /// </summary>

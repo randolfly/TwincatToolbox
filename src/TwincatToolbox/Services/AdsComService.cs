@@ -111,4 +111,8 @@ public class AdsComService : IAdsComService
         var notificationHandle = adsClient.AddDeviceNotification(path, byteSize, settings, null);
         return notificationHandle;
     }
+
+    public void RemoveDeviceNotification(uint notificationHandle) {
+        adsClient.TryDeleteDeviceNotification(notificationHandle);
+    }
 }

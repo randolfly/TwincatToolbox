@@ -15,8 +15,10 @@
     <suki:GlassCard Margin="10">
         <StackPanel HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch">
-            <Grid ColumnDefinitions="6*,*,*,*">
-                <TextBox Text="{Binding SearchText}" Watermark="Search Ads Symbols" />
+            <Grid ColumnDefinitions="6*,*,*,*,*">
+                <TextBox Text="{Binding SearchText}"
+                         IsEnabled="{Binding IsLoggingStopped}"
+                         Watermark="Search Ads Symbols" />
                 <Button Classes="Basic"
                         Grid.Column="1"
                         Command="{Binding GetAvailableSymbolsCommand}"
@@ -35,8 +37,14 @@
                         ToolTip.Tip="Start Log">
                     <materialIcons:MaterialIcon Kind="Play" />
                 </Button>
+                <Button Classes="Basic"
+                        Grid.Column="4"
+                        Command="{Binding StopLogCommand}"
+                        ToolTip.Tip="Stop Log">
+                    <materialIcons:MaterialIcon Kind="Stop" />
+                </Button>
             </Grid>
-            <Grid ColumnDefinitions="*,*">
+            <Grid ColumnDefinitions="*,*" IsEnabled="{Binding IsLoggingStopped}">
                 <suki:GlassCard Margin="5">
                     <suki:GroupBox Header="Available Symbols">
                         <ListBox ScrollViewer.VerticalScrollBarVisibility="Visible"

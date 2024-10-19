@@ -2,7 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 
 using HarfBuzzSharp;
@@ -18,9 +20,15 @@ public interface ILogDataService
     public Dictionary<string, LogDataChannel> LogDict { get; }
 
     public void AddChannel(string channelName);
-    public void AddData(string channelName, double data);
+    public Task AddDataAsync(string channelName, double data);
     public void RemoveAllChannels();
 
+    public Task<List<double>> LoadDataAsync(string channelName);
+    public Task<Dictionary<string, List<double>>> LoadAllChannelsAsync();
+
+    public Task ExportDataAsync(Dictionary<string, List<double>> dataSrc,string fileName, List<string> exportTypes);
+
+    public void DeleteTmpFiles();
 }
 
 public class LogDataChannel(int bufferCapacity, string channelName)
@@ -42,35 +50,64 @@ public class LogDataChannel(int bufferCapacity, string channelName)
             return path;
         }
     }
-    public string FilePath {
-        get
-        {
-            var file = Path.Combine(LogDataTempFolder, "_" + Name + ".csv");
-            if (!File.Exists(file))
-            {
-                File.Create(file);
-            }
-            return file;
-        }
-     }
+    public string FilePath => Path.Combine(LogDataTempFolder, "_" + Name + ".csv");
 
     // storage tmp data for logging(default data type is double)
     private readonly CircularBuffer<double> _buffer = new(bufferCapacity);
 
-    public void Add(double data) {
+    public async Task AddAsync(double data) {
         _buffer.Add(data);
         if ((_buffer.Size * 2) >= _buffer.Capacity)
         {
+            Debug.WriteLine($"Buffer is half size, save to file: {FilePath}");
             var dataSrc = _buffer.RemoveRange(_buffer.Size);
-            SaveToFile(dataSrc, FilePath);
+            await SaveToFileAsync(dataSrc, FilePath);
         }
     }
 
-    public static void SaveToFile(ArraySegment<double> array, string filePath) {
-        using var writer = new StreamWriter(filePath, true);
-        foreach (double data in array)
+    public static async Task SaveToFileAsync(ArraySegment<double> array, string filePath) {
+
+        var stringBuilder = new StringBuilder();
+        foreach (var value in array)
         {
-            writer.WriteLine(data.ToString());
+            stringBuilder.AppendLine(value.ToString());
+        }
+
+        using var fileStream = new FileStream(filePath,
+            FileMode.Append, 
+            FileAccess.Write,
+            FileShare.None, 4096, true);
+        using var writer = new StreamWriter(fileStream);
+        await writer.WriteAsync(stringBuilder.ToString());
+    }
+
+    public async Task<List<double>> LoadFromFileAsync() {
+        var data = new List<double>();
+        if (!File.Exists(FilePath))
+        {
+            return data;
+        }
+
+        using var fileStream = new FileStream(FilePath,
+            FileMode.Open,
+            FileAccess.Read,
+            FileShare.Read, 4096, true);
+        using var reader = new StreamReader(fileStream);
+        string? line;
+        while ((line = await reader.ReadLineAsync()) != null)
+        {
+            if (double.TryParse(line, out var value))
+            {
+                data.Add(value);
+            }
+        }
+        return data;
+    }
+
+    public void DeleteTmpFile() {
+        if (File.Exists(FilePath))
+        {
+            File.Delete(FilePath);
         }
     }
 }
