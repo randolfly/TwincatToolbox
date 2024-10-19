@@ -13,7 +13,7 @@ using ScottPlot.Plottables;
 
 namespace TwincatToolbox;
 
-public partial class LogPlotWindow : Window
+public partial class LogPlotWindow : Window, IDisposable
 {
     public string LogName { get; set; } = "Log";
     private readonly DataStreamer DataStreamer;
@@ -27,7 +27,8 @@ public partial class LogPlotWindow : Window
 
         LogName = title;
         Title = LogName;
-        LogPlot.Plot.Axes.ContinuouslyAutoscale = true;
+        // will cause const data flow not render!
+        //LogPlot.Plot.Axes.ContinuouslyAutoscale = true;
         LogPlot.Plot.ScaleFactor = 1.5;
 
         DataStreamer = LogPlot.Plot.Add.DataStreamer(logNum);
@@ -73,11 +74,13 @@ public partial class LogPlotWindow : Window
     /// <param name="ys"></param>
     /// <param name="sampleTime">sample time, unit ms</param>
     public void ShowAllData(double[] ys, int sampleTime = 1) {
+        UpdatePlotTimer.Stop();
         LogPlot.Plot.Clear();
+        //LogPlot.Plot.Axes.ContinuouslyAutoscale = false;
         var xs = Enumerable.Range(0, ys.Length)
             .Select(x => x * sampleTime).ToArray();
-        FullDataSignal = LogPlot.Plot.Add.SignalXY(xs, ys);
         LogPlot.Plot.Add.Palette = new ScottPlot.Palettes.Nord();
+        FullDataSignal = LogPlot.Plot.Add.SignalXY(xs, ys);
 
         FullDataCrosshair = LogPlot.Plot.Add.Crosshair(0, 0);
         FullDataCrosshair.IsVisible = false;
@@ -86,6 +89,9 @@ public partial class LogPlotWindow : Window
 
         //LogPlot.Plot.XLabel("Time(ms)");
         //CustomPlotInteraction();
+        LogPlot.Plot.Axes.AutoScale();
+        LogPlot.Refresh();
+
         LogPlot.PointerMoved += (s, e) =>
         {
             var currentPosition = e.GetCurrentPoint(LogPlot).Position;
@@ -158,4 +164,7 @@ public partial class LogPlotWindow : Window
         LogPlot.UserInputProcessor.UserActionResponses.Add(keyPanResponse);
     }
 
+    public void Dispose() {
+        UpdatePlotTimer.Dispose();
+    }
 }
