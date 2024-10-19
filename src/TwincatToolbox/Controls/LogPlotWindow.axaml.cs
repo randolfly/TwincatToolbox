@@ -41,6 +41,7 @@ public partial class LogPlotWindow : Window, IDisposable
                 {
                     LogPlot.Refresh();
                 }
+                LogPlot.Plot.Axes.AutoScale();
             };
     }
 
