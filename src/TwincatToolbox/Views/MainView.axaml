@@ -46,7 +46,7 @@
                     <TextBox Text="{Binding PortId}" Watermark="PortId" />
 
                     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal"
-                                Spacing="10">
+                                Spacing="0">
                         <Button Classes="Basic" ToolTip.Tip="Connecte Ads"
                                 Command="{Binding ConnectAdsServerCommand}">
                             <materialIcons:MaterialIcon Kind="Connection"/>
@@ -58,6 +58,10 @@
                         <Button Classes="Basic" ToolTip.Tip="Check Status"
                                 Command="{Binding CheckAdsStateCommand}">
                             <materialIcons:MaterialIcon Kind="Check"/>
+                        </Button>
+                        <Button Classes="Basic" ToolTip.Tip="Scan AdsRoute"
+                                Command="{Binding ScanAndSelectAdsRouteCommand}">
+                            <materialIcons:MaterialIcon Kind="RadioTower"/>
                         </Button>
                     </StackPanel>
                 </StackPanel>
