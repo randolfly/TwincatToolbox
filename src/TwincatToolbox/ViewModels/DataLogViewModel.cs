@@ -16,8 +16,10 @@ using CommunityToolkit.Mvvm.Input;
 using Material.Icons;
 
 using SukiUI.Controls;
+using SukiUI.Dialogs;
 
 using TwinCAT.Ads;
+using TwinCAT.Ads.TypeSystem;
 
 using TwincatToolbox.Extensions;
 using TwincatToolbox.Models;
@@ -74,6 +76,8 @@ public partial class DataLogViewModel : ViewModelBase
 
     private Dictionary<uint, SymbolInfo> _symbolsDict = [];
 
+    public ISukiDialogManager DialogManager { get; } = DialogManageService.DialogManager;
+
     public DataLogViewModel(IAdsComService adsComService,
     ILogDataService logDataService, ILogPlotService logPlotService)
     : base("DataLog", MaterialIconKind.Blog) {
@@ -112,14 +116,16 @@ public partial class DataLogViewModel : ViewModelBase
         LogSymbols.Clear();
         foreach (var symbolName in logConfig.LogSymbols)
         {
-            LogSymbols.AddSorted(AvailableSymbols.Find(s => s.Name == symbolName),
-                SymbolInfoComparer.Instance);
+            var symbol = AvailableSymbols.Find(s => s.Name == symbolName);
+            if (symbol is null) break;
+            LogSymbols.AddSorted(symbol, SymbolInfoComparer.Instance);
         }
         PlotSymbols.Clear();
         foreach (var symbolName in logConfig.PlotSymbols)
         {
-            PlotSymbols.AddSorted(AvailableSymbols.Find(s => s.Name == symbolName),
-                SymbolInfoComparer.Instance);
+            var symbol = AvailableSymbols.Find(s => s.Name == symbolName);
+            if (symbol is null) break;
+            PlotSymbols.AddSorted(symbol, SymbolInfoComparer.Instance);
         }
     }
 
@@ -151,10 +157,13 @@ public partial class DataLogViewModel : ViewModelBase
 
     [RelayCommand]
     private void OpenLogConfigDialog() {
-        SukiHost.ShowDialog(new LogConfigControl
-        {
-            DataContext = new LogConfigViewModel()
-        });
+        DialogManager.CreateDialog()
+            .WithContent(new LogConfigControl
+            {
+                DataContext = new LogConfigViewModel()
+            })
+            .Dismiss().ByClickingBackground()
+            .TryShow();
     }
 
     [RelayCommand]

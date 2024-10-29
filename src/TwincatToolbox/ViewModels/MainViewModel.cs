@@ -1,15 +1,13 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
 using Avalonia.Collections;
-using Avalonia.Controls.ApplicationLifetimes;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-using SukiUI.Controls;
+using SukiUI.Dialogs;
 
 using TwinCAT.Ads;
 
@@ -31,6 +29,7 @@ public partial class MainViewModel : ObservableObject
     private IAdsComService _adsComService;
 
     [ObservableProperty] private string _adsStateText = string.Empty;
+    public ISukiDialogManager DialogManager { get; } = DialogManageService.DialogManager;
 
     public MainViewModel(IEnumerable<ViewModelBase> viewBases, IAdsComService adsComService) 
     {
@@ -66,20 +65,5 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     private void OnCheckAdsState() {
         AdsStateText = _adsComService.GetAdsState().ToString();
-    }
-
-    [RelayCommand]
-    private async Task ScanAndSelectAdsRouteAsync() {
-        var dialog = new ScanAdsRouteControl
-        {
-            DataContext = new ScanAdsRouteViewModel()
-        };
-
-        if (App.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            var dialogResult = await dialog.ShowDialog<string>(desktop?.MainWindow);
-            if(dialogResult != null) NetId = dialogResult;
-            Debug.WriteLine($"Selected NetId: {NetId}");
-        }
     }
 }
