@@ -18,6 +18,7 @@ using Material.Icons;
 using SukiUI.Controls;
 
 using TwinCAT.Ads;
+using TwinCAT.Ads.TypeSystem;
 
 using TwincatToolbox.Extensions;
 using TwincatToolbox.Models;
@@ -112,14 +113,16 @@ public partial class DataLogViewModel : ViewModelBase
         LogSymbols.Clear();
         foreach (var symbolName in logConfig.LogSymbols)
         {
-            LogSymbols.AddSorted(AvailableSymbols.Find(s => s.Name == symbolName),
-                SymbolInfoComparer.Instance);
+            var symbol = AvailableSymbols.Find(s => s.Name == symbolName);
+            if (symbol is null) break;
+            LogSymbols.AddSorted(symbol, SymbolInfoComparer.Instance);
         }
         PlotSymbols.Clear();
         foreach (var symbolName in logConfig.PlotSymbols)
         {
-            PlotSymbols.AddSorted(AvailableSymbols.Find(s => s.Name == symbolName),
-                SymbolInfoComparer.Instance);
+            var symbol = AvailableSymbols.Find(s => s.Name == symbolName);
+            if (symbol is null) break;
+            PlotSymbols.AddSorted(symbol, SymbolInfoComparer.Instance);
         }
     }
 
