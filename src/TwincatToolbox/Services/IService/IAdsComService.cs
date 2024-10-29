@@ -24,10 +24,10 @@ public interface IAdsComService : IDisposable
     public uint AddDeviceNotification(string path, int byteSize, NotificationSettings settings);
 
     public void RemoveDeviceNotification(uint notificationHandle);
+}
 
-    /// <summary>
-    /// 扫描本地网络上的Ads服务器
-    /// </summary>
-    /// <returns>服务器地址(key: NetId, value: PortId)</returns>
-    public List<AmsNetId> ScanAdsNetwork();
+public class AdsRouteInfo {
+    public string Name { get; set; }
+    public string Address { get; set; }
+    public string NetId { get; set; }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 using TwinCAT;
 using TwinCAT.Ads;
@@ -92,13 +93,6 @@ public class AdsComService : IAdsComService
         adsClient.Dispose();
     }
 
-    public List<AmsNetId> ScanAdsNetwork() {
-        // todo: 没有现成的API可以扫描本地网络上的Ads服务器(PowerShell可以实现)
-        var adsServers = new List<AmsNetId>();
-
-        return adsServers;
-    }
-
     public void AddNotificationHandler(EventHandler<AdsNotificationEventArgs> handler) {
         adsClient.AdsNotification += handler;
     }
@@ -114,5 +108,25 @@ public class AdsComService : IAdsComService
 
     public void RemoveDeviceNotification(uint notificationHandle) {
         adsClient.TryDeleteDeviceNotification(notificationHandle);
+    }
+
+    public static List<AdsRouteInfo> ScanAdsRoutes() {
+        var xmlPath = "C:\\TwinCAT\\3.1\\Target\\StaticRoutes.xml";
+        var xml = XDocument.Load(xmlPath);
+        var routeList = xml?.Root?.Element("RemoteConnections")?.Elements()
+            .Select(route => new AdsRouteInfo
+            {
+                Name = route.Element("Name")?.Value ?? string.Empty,
+                Address = route.Element("Address")?.Value ?? string.Empty,
+                NetId = route.Element("NetId")?.Value ?? string.Empty
+            }).ToList()!;
+
+        routeList.Add(new AdsRouteInfo
+        {
+            Name = "Local",
+            Address = AmsNetId.Local.ToString(),
+            NetId = AmsNetId.Local.ToString()
+        });
+        return routeList;
     }
 }

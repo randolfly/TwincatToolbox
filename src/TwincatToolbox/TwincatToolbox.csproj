@@ -47,6 +47,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Controls\ScanAdsRouteControl.axaml.cs">
+      <DependentUpon>ScanAdsRouteControl.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Controls\LogConfigControl.axaml.cs">
       <DependentUpon>LogConfigControl.axaml</DependentUpon>
     </Compile>

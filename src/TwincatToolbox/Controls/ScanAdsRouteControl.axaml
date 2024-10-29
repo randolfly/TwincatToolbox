@@ -1,0 +1,39 @@
+<suki:SukiWindow xmlns="https://github.com/avaloniaui"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                 xmlns:suki="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+                 xmlns:p1="https://github.com/kikipoulet/SukiUI"
+                 xmlns:vm="using:TwincatToolbox.ViewModels"
+                 x:Class="TwincatToolbox.ScanAdsRouteControl"
+                 x:DataType="vm:ScanAdsRouteViewModel"
+                 Title="Scan and Select AdsRoute"
+                 Width="400" Height="300" BackgroundStyle="BubbleStrong"
+                 mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="300">
+    <Design.DataContext>
+        <vm:ScanAdsRouteViewModel/>
+    </Design.DataContext>
+    <DockPanel>
+        <Grid DockPanel.Dock="Top" Margin="10, 5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0">Scan and select target ads route</TextBlock>
+            <Button Grid.Column="1" Content="Close" Classes="Flat" Click="CloseDialog"/>
+        </Grid>
+        <DataGrid Margin="5" ItemsSource="{Binding AdsRoutes}"
+                  SelectedItem="{Binding SelectedAdsRoute}"
+                  GridLinesVisibility="All"
+                  IsReadOnly="True"
+                  BorderThickness="2" BorderBrush="Gray">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name" Width="80" Binding="{Binding Name}"/>
+                <DataGridTextColumn Header="Address" Width="160" Binding="{Binding Address}"/>
+                <DataGridTextColumn Header="NetId" Width="120" Binding="{Binding NetId}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </DockPanel>
+
+</suki:SukiWindow>
