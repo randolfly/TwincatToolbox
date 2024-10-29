@@ -18,21 +18,21 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="11.1.2" />
-    <PackageReference Include="Avalonia.Desktop" Version="11.1.2" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.1.2" />
-    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.1.2" />
+    <PackageReference Include="Avalonia" Version="11.2.0-rc2" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.2.0-rc2" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.0-rc2" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.2.0-rc2" />
     <!--Condition
     below is needed to remove Avalonia.Diagnostics package from build output in Release
     configuration.-->
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.1.2" />
-    <PackageReference Include="Beckhoff.TwinCAT.Ads" Version="6.1.260" />
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+    <PackageReference Include="Beckhoff.TwinCAT.Ads" Version="6.1.294" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
     <PackageReference Include="Material.Icons.Avalonia" Version="2.1.10" />
     <PackageReference Include="MathNet.Numerics" Version="6.0.0-beta1" />
     <PackageReference Include="MathNet.Numerics.Data.Matlab" Version="6.0.0-beta1" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0-preview.6.24327.7" />
-    <PackageReference Include="ScottPlot.Avalonia" Version="5.0.37" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0-rc.2.24473.5" />
+    <PackageReference Include="ScottPlot.Avalonia" Version="5.0.41" />
   </ItemGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
@@ -43,12 +43,7 @@
     <PackageReference Condition="$(DefineConstants.Contains(ENABLE_XAML_HOT_RELOAD))" Include="Avalonia.Markup.Xaml.Loader" Version="11.1.2" />
     <PackageReference Condition="$(DefineConstants.Contains(ENABLE_XAML_HOT_RELOAD))" Include="HotAvalonia" Version="1.1.1" />
     <PackageReference Include="HotAvalonia.Extensions" Version="1.1.1" PrivateAssets="All" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="SukiUI">
-      <HintPath>SukiUI.dll</HintPath>
-    </Reference>
+    <PackageReference Include="SukiUI" Version="6.0.0-rc" />
   </ItemGroup>
 
   <ItemGroup>

@@ -75,4 +75,7 @@
             </suki:GlassCard>
         </suki:SukiSideMenu.FooterContent>
     </suki:SukiSideMenu>
+    <suki:SukiWindow.Hosts>
+        <suki:SukiDialogHost Manager="{Binding DialogManager}"/>
+    </suki:SukiWindow.Hosts>
 </suki:SukiWindow>

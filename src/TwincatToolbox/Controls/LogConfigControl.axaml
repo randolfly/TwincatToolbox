@@ -9,29 +9,30 @@
              x:Class="TwincatToolbox.LogConfigControl"
              x:DataType="vm:LogConfigViewModel"
              mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="200">
-    <Border Margin="10">
-        <DockPanel>
+    <Border Margin="2">
+        <DockPanel MinHeight="150">
             <Grid DockPanel.Dock="Top" ShowGridLines="False"
-                  RowDefinitions="Auto,Auto" ColumnDefinitions="*,*">
-                <StackPanel Orientation="Horizontal"
-                            HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                  RowDefinitions="Auto,Auto" ColumnDefinitions="*,*,2*">
+                <Grid ColumnDefinitions="4*, *"
+                      Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
                     <TextBox Text="{Binding LogFolder}" Watermark="FolderName" IsReadOnly="True"
-                             FlowDirection="LeftToRight" ClipToBounds="True" MaxWidth="120"
+                             FlowDirection="LeftToRight" ClipToBounds="True"
+                             HorizontalAlignment="Stretch"
                              TextWrapping="NoWrap"/>
-                    <Button Classes="Basic" Command="{Binding SelectFolderCommand}">
+                    <Button Grid.Column="1" Classes="Basic" Command="{Binding SelectFolderCommand}">
                         <materialIcons:MaterialIcon Kind="Folder"/>
                     </Button>
-                </StackPanel>
-                <TextBox Grid.Row="0" Grid.Column="1"
+                </Grid>
+                <TextBox Grid.Row="1" Grid.Column="0"
                          Text="{Binding LogFileName}"
                          Watermark="FileName"/>
-                <NumericUpDown Grid.Row="1" Grid.Column="0"
+                <NumericUpDown Grid.Row="1" Grid.Column="1"
                                p1:NumericUpDownExtensions.Unit="ms"
                                Minimum="1"
                                ShowButtonSpinner="True"
                                Value="{Binding LogPeriod}"
                                Watermark="LogPeriod"/>
-                <ListBox Grid.Row="1" Grid.Column="1"
+                <ListBox Grid.Row="1" Grid.Column="2"
                          SelectionMode="Toggle, Multiple"
                          ItemsSource="{Binding AvailableLogFileTypes}"
                          SelectedItems="{Binding LogFileTypes}">
@@ -50,8 +51,6 @@
                 <Button Content="Load" Foreground="Red" Command="{Binding LoadConfigCommand}">
                 </Button>
                 <Button Content="Save" Command="{Binding SaveConfigCommand}">
-                </Button>
-                <Button Content="Close" TextElement.Foreground="Red" Command="{Binding CloseDialogCommand}" HotKey="Escape">
                 </Button>
             </StackPanel>
         </DockPanel>

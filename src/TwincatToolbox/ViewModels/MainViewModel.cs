@@ -7,6 +7,8 @@ using Avalonia.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using SukiUI.Dialogs;
+
 using TwinCAT.Ads;
 
 using TwincatToolbox.Models;
@@ -27,6 +29,7 @@ public partial class MainViewModel : ObservableObject
     private IAdsComService _adsComService;
 
     [ObservableProperty] private string _adsStateText = string.Empty;
+    public ISukiDialogManager DialogManager { get; } = DialogManageService.DialogManager;
 
     public MainViewModel(IEnumerable<ViewModelBase> viewBases, IAdsComService adsComService) 
     {

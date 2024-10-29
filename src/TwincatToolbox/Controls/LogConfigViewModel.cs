@@ -22,6 +22,7 @@ using TwincatToolbox.Services;
 using System.Diagnostics;
 using Microsoft.VisualBasic.FileIO;
 using TwincatToolbox.Constants;
+using SukiUI;
 
 namespace TwincatToolbox.ViewModels;
 public partial class LogConfigViewModel : ControlModelBase
@@ -57,10 +58,6 @@ public partial class LogConfigViewModel : ControlModelBase
         }
     }
 
-    [RelayCommand]
-    private void CloseDialog() {
-        SukiHost.CloseDialog();
-    }
     [RelayCommand]
     private void LoadConfig() {
         LogPeriod = _logConfig.Period;

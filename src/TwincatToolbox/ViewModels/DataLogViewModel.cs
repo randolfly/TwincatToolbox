@@ -16,6 +16,7 @@ using CommunityToolkit.Mvvm.Input;
 using Material.Icons;
 
 using SukiUI.Controls;
+using SukiUI.Dialogs;
 
 using TwinCAT.Ads;
 using TwinCAT.Ads.TypeSystem;
@@ -74,6 +75,8 @@ public partial class DataLogViewModel : ViewModelBase
     #endregion
 
     private Dictionary<uint, SymbolInfo> _symbolsDict = [];
+
+    public ISukiDialogManager DialogManager { get; } = DialogManageService.DialogManager;
 
     public DataLogViewModel(IAdsComService adsComService,
     ILogDataService logDataService, ILogPlotService logPlotService)
@@ -154,10 +157,13 @@ public partial class DataLogViewModel : ViewModelBase
 
     [RelayCommand]
     private void OpenLogConfigDialog() {
-        SukiHost.ShowDialog(new LogConfigControl
-        {
-            DataContext = new LogConfigViewModel()
-        });
+        DialogManager.CreateDialog()
+            .WithContent(new LogConfigControl
+            {
+                DataContext = new LogConfigViewModel()
+            })
+            .Dismiss().ByClickingBackground()
+            .TryShow();
     }
 
     [RelayCommand]
