@@ -9,7 +9,7 @@
                  x:Class="TwincatToolbox.ScanAdsRouteControl"
                  x:DataType="vm:ScanAdsRouteViewModel"
                  Title="Scan and Select AdsRoute"
-                 Width="400" Height="300" BackgroundStyle="BubbleStrong"
+                 Width="400" Height="300" ShowInTaskbar="False" WindowStartupLocation="CenterOwner"
                  mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="300">
     <Design.DataContext>
         <vm:ScanAdsRouteViewModel/>
@@ -20,7 +20,7 @@
                 <ColumnDefinition Width="3*"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0">Scan and select target ads route</TextBlock>
+            <TextBlock Grid.Column="0" FontSize="16" FontWeight="DemiBold">Scan and select target ads route</TextBlock>
             <Button Grid.Column="1" Content="Close" Classes="Flat" Click="CloseDialog"/>
         </Grid>
         <DataGrid Margin="5" ItemsSource="{Binding AdsRoutes}"
