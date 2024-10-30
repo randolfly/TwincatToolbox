@@ -7,20 +7,15 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
-
 using Avalonia.Controls;
-
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-
+using FuzzySharp;
 using Material.Icons;
-
 using SukiUI.Controls;
 using SukiUI.Dialogs;
-
 using TwinCAT.Ads;
 using TwinCAT.Ads.TypeSystem;
-
 using TwincatToolbox.Extensions;
 using TwincatToolbox.Models;
 using TwincatToolbox.Services;
@@ -38,15 +33,14 @@ public partial class DataLogViewModel : ViewModelBase
 
     #region log and plot symbols
 
-    [NotifyPropertyChangedFor(nameof(SearchResultSymbols))]
-    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(SearchResultSymbols))] [ObservableProperty]
     private string _searchText = string.Empty;
 
-    [NotifyPropertyChangedFor(nameof(SearchResultSymbols))]
-    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(SearchResultSymbols))] [ObservableProperty]
     private List<SymbolInfo> _availableSymbols = new();
 
     private List<SymbolInfo> _searchResultSymbols = new();
+
     public List<SymbolInfo> SearchResultSymbols
     {
         get
@@ -56,7 +50,7 @@ public partial class DataLogViewModel : ViewModelBase
             SearchResultSelectedSymbols.CollectionChanged -= OnSearchResultSelectedSymbolsChanged;
             SearchResultSelectedSymbols.Clear();
             var initSearchResultSelectedSymbols = _searchResultSymbols
-            .Intersect(LogSymbols, SymbolInfoComparer.Instance);
+                .Intersect(LogSymbols, SymbolInfoComparer.Instance);
             foreach (var symbol in initSearchResultSelectedSymbols) SearchResultSelectedSymbols.Add(symbol);
             SearchResultSelectedSymbols.CollectionChanged += OnSearchResultSelectedSymbolsChanged;
 
@@ -64,14 +58,13 @@ public partial class DataLogViewModel : ViewModelBase
         }
     }
 
-    [ObservableProperty]
-    private ObservableCollection<SymbolInfo> _searchResultSelectedSymbols = new();
+    [ObservableProperty] private ObservableCollection<SymbolInfo> _searchResultSelectedSymbols = new();
     public ObservableCollection<SymbolInfo> LogSymbols { get; set; } = [];
     public ObservableCollection<SymbolInfo> PlotSymbols { get; } = [];
     private bool _isFirstGetAvailableSymbols = true;
 
-    [ObservableProperty]
-    private bool _isLoggingStopped = true;
+    [ObservableProperty] private bool _isLoggingStopped = true;
+
     #endregion
 
     private Dictionary<uint, SymbolInfo> _symbolsDict = [];
@@ -79,8 +72,9 @@ public partial class DataLogViewModel : ViewModelBase
     public ISukiDialogManager DialogManager { get; } = DialogManageService.DialogManager;
 
     public DataLogViewModel(IAdsComService adsComService,
-    ILogDataService logDataService, ILogPlotService logPlotService)
-    : base("DataLog", MaterialIconKind.Blog) {
+        ILogDataService logDataService, ILogPlotService logPlotService)
+        : base("DataLog", MaterialIconKind.Blog)
+    {
         _adsComService = adsComService;
         _logDataService = logDataService;
         _logPlotService = logPlotService;
@@ -90,17 +84,20 @@ public partial class DataLogViewModel : ViewModelBase
         SearchResultSelectedSymbols.CollectionChanged += OnSearchResultSelectedSymbolsChanged;
     }
 
-    private void OnSearchResultSelectedSymbolsChanged(object? sender, NotifyCollectionChangedEventArgs e) {
+    private void OnSearchResultSelectedSymbolsChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
         UpdateLogSymbol();
     }
 
     [RelayCommand]
-    private void OnGetAvailableSymbols() {
+    private void OnGetAvailableSymbols()
+    {
         if (_adsComService.GetAdsState() == TwinCAT.Ads.AdsState.Invalid)
         {
             Debug.WriteLine("Ads server is not connected.");
             return;
         }
+
         AvailableSymbols = _adsComService.GetAvailableSymbols();
         AvailableSymbols.Sort((a, b) => a.Name.CompareTo(b.Name));
         Debug.WriteLine("Available symbols: {0}", AvailableSymbols.Count());
@@ -112,7 +109,8 @@ public partial class DataLogViewModel : ViewModelBase
         }
     }
 
-    private void InitLogAndPlotSymbolsWithConfig(LogConfig logConfig) {
+    private void InitLogAndPlotSymbolsWithConfig(LogConfig logConfig)
+    {
         LogSymbols.Clear();
         foreach (var symbolName in logConfig.LogSymbols)
         {
@@ -120,6 +118,7 @@ public partial class DataLogViewModel : ViewModelBase
             if (symbol is null) break;
             LogSymbols.AddSorted(symbol, SymbolInfoComparer.Instance);
         }
+
         PlotSymbols.Clear();
         foreach (var symbolName in logConfig.PlotSymbols)
         {
@@ -129,34 +128,37 @@ public partial class DataLogViewModel : ViewModelBase
         }
     }
 
-    public List<SymbolInfo> SearchSymbols(IList<SymbolInfo> sourceList) {
-        // todo: ²¹³äÄ£ºýËÑË÷Âß¼­
+    public List<SymbolInfo> SearchSymbols(IList<SymbolInfo> sourceList)
+    {
+        if (string.IsNullOrEmpty((SearchText))) return sourceList.ToList();
         var searchResults = sourceList
-.Where(s => s.Name.Contains(SearchText))
+            .Where(s=>Fuzz.PartialRatio(SearchText.ToLower(), s.Name.ToLower()) > 85)
             .ToList();
         Debug.WriteLine("Search results: {0}", searchResults.Count());
-
+        
         return searchResults;
     }
 
-    private void UpdateLogSymbol() {
+    private void UpdateLogSymbol()
+    {
         var logSearchSymbols = SearchSymbols(LogSymbols);
         if (logSearchSymbols.Count > SearchResultSelectedSymbols.Count)
         {
             var distinctSymbols = logSearchSymbols
-            .Except(SearchResultSelectedSymbols, SymbolInfoComparer.Instance);
+                .Except(SearchResultSelectedSymbols, SymbolInfoComparer.Instance);
             foreach (var symbol in distinctSymbols) LogSymbols.Remove(symbol);
         }
         else if (logSearchSymbols.Count < SearchResultSelectedSymbols.Count)
         {
             var distinctSymbols = SearchResultSelectedSymbols
-            .Except(logSearchSymbols, SymbolInfoComparer.Instance);
+                .Except(logSearchSymbols, SymbolInfoComparer.Instance);
             foreach (var symbol in distinctSymbols) LogSymbols.AddSorted(symbol, SymbolInfoComparer.Instance);
         }
     }
 
     [RelayCommand]
-    private void OpenLogConfigDialog() {
+    private void OpenLogConfigDialog()
+    {
         DialogManager.CreateDialog()
             .WithContent(new LogConfigControl
             {
@@ -167,21 +169,23 @@ public partial class DataLogViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void StartLog() {
+    private void StartLog()
+    {
         if (LogSymbols.Count == 0)
         {
             Debug.WriteLine("No symbol selected for logging.");
             return;
         }
+
         _symbolsDict.Clear();
         _logDataService.RemoveAllChannels();
         foreach (var symbol in LogSymbols)
         {
             var notificationHandle = _adsComService.AddDeviceNotification(
-            symbol.Symbol.InstancePath,
-            symbol.Symbol.ByteSize,
-            new NotificationSettings(AdsTransMode.Cyclic,
-            AppConfigService.AppConfig.LogConfig.Period, 0));
+                symbol.Symbol.InstancePath,
+                symbol.Symbol.ByteSize,
+                new NotificationSettings(AdsTransMode.Cyclic,
+                    AppConfigService.AppConfig.LogConfig.Period, 0));
             _symbolsDict.Add(notificationHandle, symbol);
             _logDataService.AddChannel(symbol.Name);
         }
@@ -200,14 +204,16 @@ public partial class DataLogViewModel : ViewModelBase
         _adsComService.AddNotificationHandler(AdsNotificationHandler);
     }
 
-    private void ExportLogConfig() {
+    private void ExportLogConfig()
+    {
         _logConfig.LogSymbols = LogSymbols.Select(s => s.Name).ToList();
         _logConfig.PlotSymbols = PlotSymbols.Select(s => s.Name).ToList();
         AppConfigService.SaveConfig(AppConfig.ConfigFileFullName);
     }
 
     [RelayCommand]
-    private async Task StopLogAsync() {
+    private async Task StopLogAsync()
+    {
         _adsComService.RemoveNotificationHandler(AdsNotificationHandler);
 
         _symbolsDict.Keys.ToList().ForEach(handle =>
@@ -224,7 +230,8 @@ public partial class DataLogViewModel : ViewModelBase
         IsLoggingStopped = true;
     }
 
-    private async void AdsNotificationHandler(object? sender, AdsNotificationEventArgs e) {
+    private async void AdsNotificationHandler(object? sender, AdsNotificationEventArgs e)
+    {
         double data = 0.0d;
         data = e.Data.Length switch
         {
