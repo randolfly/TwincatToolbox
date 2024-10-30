@@ -54,7 +54,7 @@ public class LogConfig
         get
         {
             var datetime = DateTime.Now;
-            var fileName = FileName + "_" + datetime.ToString("yyyyMMddHHmmss");
+            var fileName = FileName + "_" + Period + "ms"+ "_" + datetime.ToString("yyyyMMddHHmmss") ;
             return Path.Combine(FolderName, fileName);
         }
     }
