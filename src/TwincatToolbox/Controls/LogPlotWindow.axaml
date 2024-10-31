@@ -3,8 +3,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:sctp="clr-namespace:ScottPlot.Avalonia;assembly=ScottPlot.Avalonia"
-        mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="300"
-        Width="600" Height="300"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="200"
+        Width="400" Height="200"
+        Topmost="True"
         x:Class="TwincatToolbox.LogPlotWindow">
     <sctp:AvaPlot Name="LogPlot"/>
 </Window>

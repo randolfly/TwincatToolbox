@@ -1,13 +1,10 @@
 using System;
 using System.Linq;
 using System.Timers;
-
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-
 using MathNet.Numerics.Integration;
-
 using ScottPlot;
 using ScottPlot.Plottables;
 
@@ -22,30 +19,32 @@ public partial class LogPlotWindow : Window, IDisposable
     private SignalXY FullDataSignal;
     private Crosshair FullDataCrosshair;
 
-    public LogPlotWindow(string title, int logNum) {
+    public LogPlotWindow(string title, int logNum)
+    {
         InitializeComponent();
-
         LogName = title;
         Title = LogName;
         // will cause const data flow not render!
         //LogPlot.Plot.Axes.ContinuouslyAutoscale = true;
-        LogPlot.Plot.ScaleFactor = 1.5;
+        LogPlot.Plot.ScaleFactor = 1.0;
 
         DataStreamer = LogPlot.Plot.Add.DataStreamer(logNum);
         DataStreamer.ViewScrollLeft();
 
         // setup a timer to request a render periodically
         UpdatePlotTimer.Elapsed += (s, e) =>
+        {
+            if (DataStreamer.HasNewData)
             {
-                if (DataStreamer.HasNewData)
-                {
-                    LogPlot.Refresh();
-                }
-                LogPlot.Plot.Axes.AutoScale();
-            };
+                LogPlot.Refresh();
+            }
+
+            LogPlot.Plot.Axes.AutoScale();
+        };
     }
 
-    public void UpdatePlot(double newData) {
+    public void UpdatePlot(double newData)
+    {
         DataStreamer.Add(newData);
         // slide marker to the left
         LogPlot.Plot.GetPlottables<Marker>()
@@ -54,19 +53,28 @@ public partial class LogPlotWindow : Window, IDisposable
 
         // remove off-screen marks
         LogPlot.Plot.GetPlottables<Marker>()
-              .Where(m => m.X < 0)
-              .ToList()
-              .ForEach(m => LogPlot.Plot.Remove(m));
+            .Where(m => m.X < 0)
+            .ToList()
+            .ForEach(m => LogPlot.Plot.Remove(m));
     }
 
-    private (double x, double y) GetPlotViewWindowPos(int id, int windowNum, int windowWidth = 600,
-        int windowHeight = 300) {
-        const int windowRowSize = 3;
+    /// <summary>
+    /// manage plot window position by plot id
+    /// </summary>
+    /// <param name="windowId">the id of plot window in the plot dict</param>
+    public void SetPlotViewWindowPosById(int windowId)
+    {
+        // todo: figure out the windows place rule
+        // the window height is wrong, actual height:1440, return height: 1600=>about 0.19 ratio
         var screen = Screens?.Primary;
-        var workingArea = screen?.WorkingArea ?? new Avalonia.PixelRect(0, 0, windowWidth, windowHeight);
-        var left = workingArea.Right - (id / windowRowSize + 1) * windowWidth;
-        var top = workingArea.Bottom - (id % windowRowSize + 1) * windowHeight;
-        return (left, top);
+        var widthScaling = (screen?.Scaling ?? 1.0);
+        var heightScaling = widthScaling + 0.2;
+        var workingArea = screen?.WorkingArea ?? new Avalonia.PixelRect(0, 0, (int)Width, (int)Height);
+        var windowRowSize = (int)((workingArea.Height) / Height / heightScaling);
+        var left = (workingArea.Right) - (windowId / windowRowSize + 1) * ((int)(Width * widthScaling));
+        var top = (workingArea.Bottom) - (windowId % windowRowSize + 1) * ((int)(Height * heightScaling));
+
+        Position = new PixelPoint(left, top);
     }
 
     /// <summary>
@@ -74,7 +82,8 @@ public partial class LogPlotWindow : Window, IDisposable
     /// </summary>
     /// <param name="ys"></param>
     /// <param name="sampleTime">sample time, unit ms</param>
-    public void ShowAllData(double[] ys, int sampleTime = 1) {
+    public void ShowAllData(double[] ys, int sampleTime = 1)
+    {
         UpdatePlotTimer.Stop();
         LogPlot.Plot.Clear();
         //LogPlot.Plot.Axes.ContinuouslyAutoscale = false;
@@ -122,7 +131,8 @@ public partial class LogPlotWindow : Window, IDisposable
         };
     }
 
-    private void CustomPlotInteraction() {
+    private void CustomPlotInteraction()
+    {
         LogPlot.UserInputProcessor.IsEnabled = true;
 
         // remove all existing responses so we can create and add our own
@@ -135,7 +145,8 @@ public partial class LogPlotWindow : Window, IDisposable
 
         // right-click-drag zoom rectangle
         var zoomRectangleButton = ScottPlot.Interactivity.StandardMouseButtons.Right;
-        var zoomRectangleResponse = new ScottPlot.Interactivity.UserActionResponses.MouseDragZoomRectangle(zoomRectangleButton);
+        var zoomRectangleResponse =
+            new ScottPlot.Interactivity.UserActionResponses.MouseDragZoomRectangle(zoomRectangleButton);
         LogPlot.UserInputProcessor.UserActionResponses.Add(zoomRectangleResponse);
 
         // right-click autoscale
@@ -151,7 +162,8 @@ public partial class LogPlotWindow : Window, IDisposable
         // Q key autoscale too
         var autoscaleKey = new ScottPlot.Interactivity.Key("Q");
         Action<ScottPlot.Plot, ScottPlot.Pixel> autoscaleAction = (plot, pixel) => plot.Axes.AutoScale();
-        var autoscaleKeyResponse = new ScottPlot.Interactivity.UserActionResponses.KeyPressResponse(autoscaleKey, autoscaleAction);
+        var autoscaleKeyResponse =
+            new ScottPlot.Interactivity.UserActionResponses.KeyPressResponse(autoscaleKey, autoscaleAction);
         LogPlot.UserInputProcessor.UserActionResponses.Add(autoscaleKeyResponse);
 
         // WASD keys pan
@@ -165,7 +177,8 @@ public partial class LogPlotWindow : Window, IDisposable
         LogPlot.UserInputProcessor.UserActionResponses.Add(keyPanResponse);
     }
 
-    public void Dispose() {
+    public void Dispose()
+    {
         UpdatePlotTimer.Dispose();
     }
 }

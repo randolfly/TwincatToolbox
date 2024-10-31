@@ -73,7 +73,7 @@ public partial class DataLogViewModel : ViewModelBase
 
     public DataLogViewModel(IAdsComService adsComService,
         ILogDataService logDataService, ILogPlotService logPlotService)
-        : base("DataLog", MaterialIconKind.Blog)
+        : base("DataLog", MaterialIconKind.Blog, index: -1)
     {
         _adsComService = adsComService;
         _logDataService = logDataService;
