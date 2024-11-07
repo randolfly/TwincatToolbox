@@ -54,7 +54,7 @@ public partial class LogConfigViewModel : ControlModelBase
             {
                 Debug.WriteLine(file.Path);
             }
-            LogFolder = files[0]?.Path.AbsolutePath ?? string.Empty;
+            LogFolder = files[0]?.Path.LocalPath ?? string.Empty;
         }
     }
 
