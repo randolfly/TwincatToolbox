@@ -63,3 +63,9 @@ Temporary data recorded during the operation is stored in `%AppData\Local\Twinca
 
 > The software configuration file is: `%AppData\Local\TwincatToolbox\TwincatToolbox.json`.If you need to migrate to a new computer, you can copy this file to transfer the data.
 
+## THANKS
+
+- [AvaloniaUI/Avalonia: Develop Desktop, Embedded, Mobile and WebAssembly apps with C# and XAML. The most popular .NET UI client technology](https://github.com/AvaloniaUI/Avalonia)
+- [kikipoulet/SukiUI: UI Theme for AvaloniaUI](https://github.com/kikipoulet/SukiUI)
+- [ScottPlot/ScottPlot: Interactive plotting library for .NET](https://github.com/scottplot/scottplot/)
+- [Beckhoff Information System - English](https://infosys.beckhoff.com/english.php?content=../content/1033/tc3_adsnetref/7312567947.html&id=)
