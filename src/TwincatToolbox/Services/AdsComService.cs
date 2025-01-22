@@ -69,26 +69,25 @@ public class AdsComService : IAdsComService
         var symbolLoader = SymbolLoaderFactory.Create(adsClient, settings);
         var symbols = symbolLoader.Symbols;
 
-        // contains name of parent symbols, used to avoid duplicate symbols(symbolTree)
-        var symbolNameSet = new HashSet<string>();
         var symbolList = new List<SymbolInfo>();
 
         foreach (var symbol in symbols)
         {
             if (symbol.InstanceName is ("MAIN" or "GVL"))
             {
-                LoadSymbolTreeBFS(symbol, ref symbolList);
+                symbolList.AddRange(LoadSymbolTreeBFS(symbol));
             }
         }
 
         return symbolList;
 
-        void LoadSymbolTreeBFS(ISymbol root, ref List<SymbolInfo> symbolList) {
+        List<SymbolInfo> LoadSymbolTreeBFS(ISymbol root) {
+            var symbolList = new List<SymbolInfo>();
             var transverseOrder = new Queue<ISymbol>();
 
             var symbolLoadQueue = new Queue<ISymbol>();
             symbolLoadQueue.Enqueue(root);
-            symbolNameSet.Add(root.GetSymbolName());
+            
 
             while (symbolLoadQueue.Count > 0)
             {
@@ -96,11 +95,9 @@ public class AdsComService : IAdsComService
                 transverseOrder.Enqueue(currentSymbol);
                 foreach (var subSymbol in currentSymbol.SubSymbols)
                 {
-                    if (!symbolNameSet.Contains(subSymbol.GetSymbolName(),
-                        StringComparer.CurrentCultureIgnoreCase))
+                    if (!subSymbol.IsReference)
                     {
                         symbolLoadQueue.Enqueue(subSymbol);
-                        symbolNameSet.Add(subSymbol.GetSymbolName());
                     }
                 }
             }
@@ -116,46 +113,11 @@ public class AdsComService : IAdsComService
 
             // remove first element, which is the root symbol(virtual symbol)
             symbolList.RemoveAt(0);
+            return symbolList;
         }
 
     }
 
-
-    /// <summary>
-    /// 获取所有可行的Symbols
-    /// </summary>
-    /// <returns>符号列表</returns>
-    public List<SymbolInfo> GetAvailableSymbols_bak() {
-        var settings = new SymbolLoaderSettings(SymbolsLoadMode.VirtualTree,
-            ValueAccessMode.SymbolicByHandle);
-        var symbolLoader = SymbolLoaderFactory.Create(adsClient, settings);
-        var symbols = symbolLoader.Symbols;
-
-        var symbolList = new List<SymbolInfo>(2);
-        foreach (var symbol in symbols)
-        {
-            if (symbol.InstanceName is not ("MAIN" or "GVL")) continue;
-            LoadSymbolNode(new SymbolInfo(symbol), ref symbolList);
-        }
-        return symbolList;
-
-        static void LoadSymbolNode(SymbolInfo symbol, ref List<SymbolInfo> symbolList) {
-            if (symbol.Symbol.SubSymbols.Count > 0)
-            {
-                foreach (var subSymbol in symbol.Symbol.SubSymbols)
-                {
-                    if (subSymbol.SubSymbols.Count > 0)
-                    {
-                        LoadSymbolNode(new SymbolInfo(subSymbol), ref symbolList);
-                    }
-                    else
-                    {
-                        symbolList.Add(new SymbolInfo(subSymbol));
-                    }
-                }
-            }
-        }
-    }
     public void Dispose() {
         adsClient.Dispose();
     }
