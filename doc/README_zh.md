@@ -64,3 +64,10 @@
 运行过程中的临时数据记录在`%AppData\Local\TwincatToolbox\tmp`下，在数据记录结束后将会自动删除
 
 > 软件配置也保存在`%AppData\Local\TwincatToolbox\TwincatToolbox.json`文件中，如果迁移电脑可以复制该文件来实现数据迁移
+
+## 致谢
+
+- [AvaloniaUI/Avalonia: Develop Desktop, Embedded, Mobile and WebAssembly apps with C# and XAML. The most popular .NET UI client technology](https://github.com/AvaloniaUI/Avalonia)
+- [kikipoulet/SukiUI: UI Theme for AvaloniaUI](https://github.com/kikipoulet/SukiUI)
+- [ScottPlot/ScottPlot: Interactive plotting library for .NET](https://github.com/scottplot/scottplot/)
+- [Beckhoff Information System - English](https://infosys.beckhoff.com/english.php?content=../content/1033/tc3_adsnetref/7312567947.html&id=)
