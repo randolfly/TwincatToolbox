@@ -11,6 +11,7 @@ using TwinCAT.Ads.TypeSystem;
 using TwinCAT.TypeSystem;
 using TwinCAT.ValueAccess;
 
+using TwincatToolbox.Extensions;
 using TwincatToolbox.Models;
 using TwincatToolbox.Services.IService;
 
@@ -56,11 +57,77 @@ public class AdsComService : IAdsComService
 
     /// <summary>
     /// 获取所有可行的Symbols
+    /// 1. 通过SymbolLoader加载所有Symbols
+    /// 2. 递归遍历所有Symbols(仅获取MAIN和GVL下的Symbols)
+    /// 3. 将Symbol转化为SymbolTree，同时执行重复项剔除
+    /// 4. 将SymbolTree转化为List<SymbolInfo>，返回
     /// </summary>
-    /// <returns>符号列表</returns>
+    /// <returns></returns>
     public List<SymbolInfo> GetAvailableSymbols() {
         var settings = new SymbolLoaderSettings(SymbolsLoadMode.VirtualTree,
-            ValueAccessMode.IndexGroupOffset);
+           ValueAccessMode.SymbolicByHandle);
+        var symbolLoader = SymbolLoaderFactory.Create(adsClient, settings);
+        var symbols = symbolLoader.Symbols;
+
+        // contains name of parent symbols, used to avoid duplicate symbols(symbolTree)
+        var symbolNameSet = new HashSet<string>();
+        var symbolList = new List<SymbolInfo>();
+
+        foreach (var symbol in symbols)
+        {
+            if (symbol.InstanceName is ("MAIN" or "GVL"))
+            {
+                LoadSymbolTreeBFS(symbol, ref symbolList);
+            }
+        }
+
+        return symbolList;
+
+        void LoadSymbolTreeBFS(ISymbol root, ref List<SymbolInfo> symbolList) {
+            var transverseOrder = new Queue<ISymbol>();
+
+            var symbolLoadQueue = new Queue<ISymbol>();
+            symbolLoadQueue.Enqueue(root);
+            symbolNameSet.Add(root.GetSymbolName());
+
+            while (symbolLoadQueue.Count > 0)
+            {
+                var currentSymbol = symbolLoadQueue.Dequeue();
+                transverseOrder.Enqueue(currentSymbol);
+                foreach (var subSymbol in currentSymbol.SubSymbols)
+                {
+                    if (!symbolNameSet.Contains(subSymbol.GetSymbolName(),
+                        StringComparer.CurrentCultureIgnoreCase))
+                    {
+                        symbolLoadQueue.Enqueue(subSymbol);
+                        symbolNameSet.Add(subSymbol.GetSymbolName());
+                    }
+                }
+            }
+
+            while (transverseOrder.Count > 0)
+            {
+                var symbol = transverseOrder.Dequeue();
+                if(symbol.SubSymbols.Count == 0)
+                {
+                    symbolList.Add(new SymbolInfo(symbol));
+                }
+            }
+
+            // remove first element, which is the root symbol(virtual symbol)
+            symbolList.RemoveAt(0);
+        }
+
+    }
+
+
+    /// <summary>
+    /// 获取所有可行的Symbols
+    /// </summary>
+    /// <returns>符号列表</returns>
+    public List<SymbolInfo> GetAvailableSymbols_bak() {
+        var settings = new SymbolLoaderSettings(SymbolsLoadMode.VirtualTree,
+            ValueAccessMode.SymbolicByHandle);
         var symbolLoader = SymbolLoaderFactory.Create(adsClient, settings);
         var symbols = symbolLoader.Symbols;
 

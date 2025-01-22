@@ -97,7 +97,7 @@ public partial class DataLogViewModel : ViewModelBase
             Debug.WriteLine("Ads server is not connected.");
             return;
         }
-
+        
         AvailableSymbols = _adsComService.GetAvailableSymbols();
         AvailableSymbols.Sort((a, b) => a.Name.CompareTo(b.Name));
         Debug.WriteLine("Available symbols: {0}", AvailableSymbols.Count());
@@ -132,11 +132,15 @@ public partial class DataLogViewModel : ViewModelBase
     {
         if (string.IsNullOrEmpty((SearchText))) return sourceList.ToList();
         var searchResults = sourceList
-            .Where(s=>Fuzz.PartialRatio(SearchText.ToLower(), s.Name.ToLower()) > 85)
-            .ToList();
-        Debug.WriteLine("Search results: {0}", searchResults.Count());
+            .OrderByDescending(s=>GetSimilarityScore(SearchText, s))
+            .Take(20).ToList();
+        // Debug.WriteLine("Search results: {0}", searchResults.Count());
         
         return searchResults;
+    }
+
+    public int GetSimilarityScore(string searchText, SymbolInfo symbolInfo) {
+        return Fuzz.PartialTokenSetRatio(searchText, symbolInfo.Name.ToLower());
     }
 
     private void UpdateLogSymbol()
