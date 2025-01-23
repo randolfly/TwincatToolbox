@@ -45,17 +45,20 @@ public partial class DataLogViewModel : ViewModelBase
     {
         get
         {
-            _searchResultSymbols = SearchSymbols(AvailableSymbols);
-
-            SearchResultSelectedSymbols.CollectionChanged -= OnSearchResultSelectedSymbolsChanged;
-            SearchResultSelectedSymbols.Clear();
-            var initSearchResultSelectedSymbols = _searchResultSymbols
-                .Intersect(LogSymbols, SymbolInfoComparer.Instance);
-            foreach (var symbol in initSearchResultSelectedSymbols) SearchResultSelectedSymbols.Add(symbol);
-            SearchResultSelectedSymbols.CollectionChanged += OnSearchResultSelectedSymbolsChanged;
-
+            UpdateSearchResultSymbols();
             return _searchResultSymbols;
         }
+    }
+
+    private void UpdateSearchResultSymbols() {
+        _searchResultSymbols = SearchSymbols(AvailableSymbols);
+
+        SearchResultSelectedSymbols.CollectionChanged -= OnSearchResultSelectedSymbolsChanged;
+        SearchResultSelectedSymbols.Clear();
+        var initSearchResultSelectedSymbols = _searchResultSymbols
+            .Intersect(LogSymbols, SymbolInfoComparer.Instance);
+        foreach (var symbol in initSearchResultSelectedSymbols) SearchResultSelectedSymbols.Add(symbol);
+        SearchResultSelectedSymbols.CollectionChanged += OnSearchResultSelectedSymbolsChanged;
     }
 
     [ObservableProperty] private ObservableCollection<SymbolInfo> _searchResultSelectedSymbols = new();
@@ -105,6 +108,7 @@ public partial class DataLogViewModel : ViewModelBase
         if (_isFirstGetAvailableSymbols)
         {
             InitLogAndPlotSymbolsWithConfig(_logConfig);
+            UpdateSearchResultSymbols();
             _isFirstGetAvailableSymbols = false;
         }
     }
@@ -133,7 +137,7 @@ public partial class DataLogViewModel : ViewModelBase
         if (string.IsNullOrEmpty((SearchText))) return sourceList.ToList();
         var searchResults = sourceList
             .OrderByDescending(s=>GetSimilarityScore(SearchText, s))
-            .Take(20).ToList();
+            .ToList();
         // Debug.WriteLine("Search results: {0}", searchResults.Count());
         
         return searchResults;
