@@ -14,7 +14,8 @@ public static class AppConfigService
 
     private static readonly JsonSerializerOptions jsonSerializerOptions = new()
     {
-        WriteIndented = true
+        WriteIndented = true,
+        Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
     };
 
     /// <summary>

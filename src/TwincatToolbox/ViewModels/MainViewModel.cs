@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO.Pipes;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -81,5 +82,14 @@ public partial class MainViewModel : ObservableObject
             if (dialogResult != null) NetId = dialogResult;
             Debug.WriteLine($"Selected NetId: {NetId}");
         }
+    }
+
+    [RelayCommand]
+    private void OpenConfigFolder() {
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = AppConfig.FolderName,
+            UseShellExecute = true
+        });
     }
 }

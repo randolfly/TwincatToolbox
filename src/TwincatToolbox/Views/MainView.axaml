@@ -79,6 +79,14 @@
             </suki:GlassCard>
         </suki:SukiSideMenu.FooterContent>
     </suki:SukiSideMenu>
+	<suki:SukiWindow.RightWindowTitleBarControls>
+		<!-- Controls show on the right of title bar -->
+		<Button Classes="Basic Rounded WindowControlsButton"
+				Command="{Binding OpenConfigFolderCommand}"
+				ToolTip.Tip="Open Config Folder">
+			<materialIcons:MaterialIcon Kind="Cog" Foreground="{DynamicResource SukiText}" />
+		</Button>
+	</suki:SukiWindow.RightWindowTitleBarControls>
     <suki:SukiWindow.Hosts>
         <suki:SukiDialogHost Manager="{Binding DialogManager}"/>
     </suki:SukiWindow.Hosts>
