@@ -10,7 +10,6 @@ using TwinCAT.TypeSystem;
 
 namespace TwincatToolbox.Models;
 
-// todo: 检查这里的 partial class是否有必要
 public class SymbolInfo(ISymbol symbol)
 {
     public ISymbol Symbol { get; set; } = symbol;

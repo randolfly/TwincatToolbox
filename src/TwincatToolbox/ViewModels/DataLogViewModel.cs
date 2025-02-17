@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Timers;
 using Avalonia.Controls;
@@ -238,20 +239,49 @@ public partial class DataLogViewModel : ViewModelBase
         IsLoggingStopped = true;
     }
 
-    private async void AdsNotificationHandler(object? sender, AdsNotificationEventArgs e)
-    {
-        double data = 0.0d;
-        data = e.Data.Length switch
+    // todo: fix extract type error, such as REAL(length = 4) => BinaryPrimitives.ReadHalfLittleEndian(e.Data.Span);
+    private async void AdsNotificationHandler(object? sender, AdsNotificationEventArgs e) {
+        if (!_symbolsDict.TryGetValue(e.Handle, out var symbol))
         {
-            1 => BitConverter.ToBoolean(e.Data.Span) ? 1 : 0,
-            2 => BinaryPrimitives.ReadInt16LittleEndian(e.Data.Span),
-            4 => BinaryPrimitives.ReadInt32LittleEndian(e.Data.Span),
-            8 => BinaryPrimitives.ReadDoubleLittleEndian(e.Data.Span),
-            _ => 0
-        };
-        var symbol = _symbolsDict[e.Handle];
+            Debug.WriteLine("Symbol not found for handle: {0}", e.Handle);
+            return;
+        }
 
-        await _logDataService.AddDataAsync(symbol.Name, data);
-        _logPlotService.AddData(symbol.Name, data);
+        var dataType = (symbol.Symbol.DataType as DataType)?.ManagedType;
+        if (dataType == null)
+        {
+            Debug.WriteLine("ManagedType is null for symbol: {0}", symbol.Name);
+            return;
+        }
+
+        object data;
+        try
+        {
+            data = SpanConverter.ConvertTo(e.Data.Span, dataType);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine("Error converting data for symbol: {0}, Exception: {1}", symbol.Name, ex);
+            return;
+        }
+
+        double result = data switch
+        {
+            bool b => b ? 1.0 : 0.0,
+            byte b => b,
+            sbyte sb => sb,
+            short s => s,
+            ushort us => us,
+            int i => i,
+            uint ui => ui,
+            long l => l,
+            ulong ul => ul,
+            float f => f,
+            double d => d,
+            _ => throw new InvalidCastException($"Unsupported data type: {dataType}")
+        };
+
+        await _logDataService.AddDataAsync(symbol.Name, result);
+        _logPlotService.AddData(symbol.Name, result);
     }
 }
