@@ -54,7 +54,15 @@
                                  SelectedItems="{Binding SearchResultSelectedSymbols}">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding Name}"/>
+                                    <TextBlock Text="{Binding Name}"
+                                               ToolTip.ShowDelay="100"
+                                               ToolTip.Placement="Right">
+                                        <ToolTip.Tip>
+                                            <StackPanel>
+                                                <TextBlock FontSize="12" Text="{Binding Name}"/>
+                                            </StackPanel>
+                                        </ToolTip.Tip>
+                                    </TextBlock>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
@@ -69,7 +77,15 @@
                                  SelectedItems="{Binding PlotSymbols}">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding Name}" />
+                                    <TextBlock Text="{Binding Name}"
+                                               ToolTip.ShowDelay="100"
+                                               ToolTip.Placement="Right">
+                                        <ToolTip.Tip>
+                                            <StackPanel>
+                                                <TextBlock FontSize="12" Text="{Binding Name}"/>
+                                            </StackPanel>
+                                        </ToolTip.Tip>
+                                    </TextBlock>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
