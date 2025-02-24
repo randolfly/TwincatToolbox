@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO.Pipes;
 using System.Linq;
 using System.Threading.Tasks;
-
+using Avalonia;
 using Avalonia.Collections;
 using Avalonia.Controls.ApplicationLifetimes;
 
@@ -11,9 +10,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using SukiUI.Dialogs;
-
-using TwinCAT.Ads;
-
 using TwincatToolbox.Models;
 using TwincatToolbox.Services;
 using TwincatToolbox.Services.IService;
@@ -25,11 +21,11 @@ public partial class MainViewModel : ObservableObject
     public IAvaloniaReadOnlyList<ViewModelBase> NavViews { get; }
     [ObservableProperty] private ViewModelBase? _activeView;
 
-    [ObservableProperty] private string _netId = string.Empty;
-    [ObservableProperty] private string _portId = string.Empty;
+    [ObservableProperty] private string _netId;
+    [ObservableProperty] private string _portId;
 
-    private AdsConfig _adsConfig;
-    private IAdsComService _adsComService;
+    private readonly AdsConfig _adsConfig;
+    private readonly IAdsComService _adsComService;
 
     [ObservableProperty] private string _adsStateText = string.Empty;
     public ISukiDialogManager DialogManager { get; } = DialogManageService.DialogManager;
@@ -76,16 +72,19 @@ public partial class MainViewModel : ObservableObject
         {
             DataContext = new ScanAdsRouteViewModel()
         };
-        if (App.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            var dialogResult = await dialog.ShowDialog<string>(desktop?.MainWindow);
-            if (dialogResult != null) NetId = dialogResult;
+            if (desktop.MainWindow != null)
+            {
+                var dialogResult = await dialog.ShowDialog<string>(desktop.MainWindow);
+                NetId = dialogResult;
+            }
             Debug.WriteLine($"Selected NetId: {NetId}");
         }
     }
 
     [RelayCommand]
-    private void OpenConfigFolder() {
+    private static void OpenConfigFolder() {
         Process.Start(new ProcessStartInfo
         {
             FileName = AppConfig.FolderName,

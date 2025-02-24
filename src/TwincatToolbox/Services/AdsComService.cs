@@ -110,9 +110,7 @@ public class AdsComService : IAdsComService
                     symbolList.Add(new SymbolInfo(symbol));
                 }
             }
-
-            // remove first element, which is the root symbol(virtual symbol)
-            symbolList.RemoveAt(0);
+            
             return symbolList;
         }
 

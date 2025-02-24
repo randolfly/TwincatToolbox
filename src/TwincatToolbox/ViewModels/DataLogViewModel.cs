@@ -51,7 +51,8 @@ public partial class DataLogViewModel : ViewModelBase
         }
     }
 
-    private void UpdateSearchResultSymbols() {
+    private void UpdateSearchResultSymbols()
+    {
         _searchResultSymbols = SearchSymbols(AvailableSymbols);
 
         SearchResultSelectedSymbols.CollectionChanged -= OnSearchResultSelectedSymbolsChanged;
@@ -75,8 +76,7 @@ public partial class DataLogViewModel : ViewModelBase
 
     public ISukiDialogManager DialogManager { get; } = DialogManageService.DialogManager;
 
-    public DataLogViewModel(IAdsComService adsComService,
-        ILogDataService logDataService, ILogPlotService logPlotService)
+    public DataLogViewModel(IAdsComService adsComService, ILogDataService logDataService, ILogPlotService logPlotService)
         : base("DataLog", MaterialIconKind.Blog, index: -1)
     {
         _adsComService = adsComService;
@@ -96,15 +96,15 @@ public partial class DataLogViewModel : ViewModelBase
     [RelayCommand]
     private void OnGetAvailableSymbols()
     {
-        if (_adsComService.GetAdsState() == TwinCAT.Ads.AdsState.Invalid)
+        if (_adsComService.GetAdsState() == AdsState.Invalid)
         {
             Debug.WriteLine("Ads server is not connected.");
             return;
         }
-        
+
         AvailableSymbols = _adsComService.GetAvailableSymbols();
-        AvailableSymbols.Sort((a, b) => a.Name.CompareTo(b.Name));
-        Debug.WriteLine("Available symbols: {0}", AvailableSymbols.Count());
+        AvailableSymbols.Sort((a, b) => string.Compare(a.Name, b.Name, StringComparison.Ordinal));
+        Debug.WriteLine("Available symbols: {0}", AvailableSymbols.Count);
 
         if (_isFirstGetAvailableSymbols)
         {
@@ -137,14 +137,15 @@ public partial class DataLogViewModel : ViewModelBase
     {
         if (string.IsNullOrEmpty((SearchText))) return sourceList.ToList();
         var searchResults = sourceList
-            .OrderByDescending(s=>GetSimilarityScore(SearchText, s))
+            .OrderByDescending(s => GetSimilarityScore(SearchText, s))
             .ToList();
         // Debug.WriteLine("Search results: {0}", searchResults.Count());
-        
+
         return searchResults;
     }
 
-    public int GetSimilarityScore(string searchText, SymbolInfo symbolInfo) {
+    public int GetSimilarityScore(string searchText, SymbolInfo symbolInfo)
+    {
         return Fuzz.PartialTokenSetRatio(searchText, symbolInfo.Name.ToLower());
     }
 
@@ -240,7 +241,8 @@ public partial class DataLogViewModel : ViewModelBase
     }
 
     // todo: fix extract type error, such as REAL(length = 4) => BinaryPrimitives.ReadHalfLittleEndian(e.Data.Span);
-    private async void AdsNotificationHandler(object? sender, AdsNotificationEventArgs e) {
+    private async void AdsNotificationHandler(object? sender, AdsNotificationEventArgs e)
+    {
         if (!_symbolsDict.TryGetValue(e.Handle, out var symbol))
         {
             Debug.WriteLine("Symbol not found for handle: {0}", e.Handle);
