@@ -128,8 +128,9 @@ public class AdsComService : IAdsComService
         adsClient.AdsNotification -= handler;
     }
 
-    public uint AddDeviceNotification(string path, int byteSize, NotificationSettings settings) {
-        var notificationHandle = adsClient.AddDeviceNotification(path, byteSize, settings, null);
+    public uint AddDeviceNotification(string path, int byteSize, NotificationSettings settings)
+    {
+        adsClient.TryAddDeviceNotification(path, byteSize, settings, null, out var notificationHandle);
         return notificationHandle;
     }
 

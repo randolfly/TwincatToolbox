@@ -191,6 +191,7 @@ public partial class DataLogViewModel : ViewModelBase
         _logDataService.RemoveAllChannels();
         foreach (var symbol in LogSymbols)
         {
+            Debug.WriteLine($"Add device notification for symbol: {symbol.Name}", "DataLogViewModel");
             var notificationHandle = _adsComService.AddDeviceNotification(
                 symbol.Symbol.InstancePath,
                 symbol.Symbol.ByteSize,
