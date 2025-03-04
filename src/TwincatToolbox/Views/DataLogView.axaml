@@ -47,7 +47,8 @@
             <Grid ColumnDefinitions="*,*" IsEnabled="{Binding IsLoggingStopped}">
                 <suki:GlassCard Margin="5">
                     <suki:GroupBox Header="Available Symbols">
-                        <ListBox ScrollViewer.VerticalScrollBarVisibility="Visible"
+                        <ListBox AutoScrollToSelectedItem = "false"
+                                 ScrollViewer.VerticalScrollBarVisibility="Visible"
                                  SelectionMode="Multiple,Toggle"
                                  MaxHeight="350"
                                  ItemsSource="{Binding SearchResultSymbols}"
